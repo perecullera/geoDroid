@@ -1,11 +1,31 @@
 apply plugin: 'com.android.application'
 
 android {
+
+    // inici custom
+    signingConfigs {
+
+        debug {
+            storeFile file(DEBUG_STORE_FILE)
+            storePassword DEBUG_STORE_PASSWORD
+            keyAlias DEBUG_KEY_ALIAS
+            keyPassword DEBUG_KEY_PASSWORD
+        }
+    }
+
+    buildTypes {
+        debug {
+            signingConfig signingConfigs.debug
+        }
+    }
+
+// fi custom
+
     compileSdkVersion 21
     buildToolsVersion "21.1.2"
 
     defaultConfig {
-        applicationId "com.example.io.myapplication"
+        applicationId "cat.geodroid.geoapp"
         minSdkVersion 15
         targetSdkVersion 21
         versionCode 1

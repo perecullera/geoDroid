@@ -1,4 +1,4 @@
-package com.example.io.myapplication;
+package cat.geodroid.geoapp;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
