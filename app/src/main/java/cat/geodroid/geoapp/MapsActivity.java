@@ -1,6 +1,5 @@
 package cat.geodroid.geoapp;
 
-
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.os.AsyncTask;
@@ -8,52 +7,51 @@ import android.os.AsyncTask;
 import android.content.Context;
 import android.app.Dialog;
 
-import android.database.Cursor;
-import android.support.v4.app.LoaderManager.LoaderCallbacks;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
-
-import android.net.Uri;
-
 import android.util.Log;
 
 import java.util.List;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.UiSettings;
 
-
+/**
+ * Activitat encarregada de carregar el mapa amb els marcadors que representen
+ * els vehicles.
+ *
+ * En crear-se l'activitat es comprova que l'APK Google Play Services estigui instal·lada.
+ * Sense ella no es podrà accedir a l'API de Google Maps.
+ * Si no està instal·lada, s'informa a l'usuari que és necessària i se li ofereix anar a
+ * la Play Store per a instal·lar-la. *
+ *
+ * Els marcadors s'obtenen d'una BD SQLite fent servir una classe interna de tasca asíncrona.
+ */
 public class MapsActivity extends FragmentActivity {
 
-    private GoogleMap mGMap; // Might be null if Google Play services APK is not available.
-
+    private GoogleMap mGMap;
     private Context context = this;
-    private MarkersDataSource data;
-    private MarkerOptions markerOptions;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-        // Getting Google Play availability status
+        // Comprovem si els Google Play Services estan disponibles.
         int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getBaseContext());
 
-        // Showing status
-        if (status != ConnectionResult.SUCCESS) { // Google Play Services are not available
+        // Avisem a l'usuari que no hi ha Google Play Services
+        if (status != ConnectionResult.SUCCESS) {
 
             int requestCode = 666;
             Dialog dialog = GooglePlayServicesUtil.getErrorDialog(status, this, requestCode);
             dialog.show();
 
-        } else { // Google Play Services are available
+        // Si hi ha els Play Services, preparem el mapa i carreguem els marcadors
+        } else {
 
             setUpMapIfNeeded();
             SetMarkersTask markersTask = new SetMarkersTask();
@@ -65,22 +63,13 @@ public class MapsActivity extends FragmentActivity {
     protected void onResume() {
         super.onResume();
         setUpMapIfNeeded();
+        SetMarkersTask markersTask = new SetMarkersTask();
+        markersTask.execute();
     }
 
     /**
-     * Sets up the map if it is possible to do so (i.e., the Google Play services APK is correctly
-     * installed) and the map has not already been instantiated.. This will ensure that we only ever
-     * call {@link #setUpMap()} once when {@link #mGMap} is not null.
-     * <p/>
-     * If it isn't installed {@link SupportMapFragment} (and
-     * {@link com.google.android.gms.maps.MapView MapView}) will show a prompt for the user to
-     * install/update the Google Play services APK on their device.
-     * <p/>
-     * A user can return to this FragmentActivity after following the prompt and correctly
-     * installing/updating/enabling the Google Play services. Since the FragmentActivity may not
-     * have been completely destroyed during this process (it is likely that it would only be
-     * stopped or paused), {@link #onCreate(Bundle)} may not be called again so we should call this
-     * method in {@link #onResume()} to guarantee that it will be called.
+     * Carrega i configura el mapa en cas que no s'hagi fet anteriorment.
+     *
      */
     private void setUpMapIfNeeded() {
         // Do a null check to confirm that we have not already instantiated the map.
@@ -91,12 +80,6 @@ public class MapsActivity extends FragmentActivity {
 
             // Getting GoogleMap object from the fragment
             mGMap = fm.getMap();
-            mGMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
-
-            UiSettings uiSettings = mGMap.getUiSettings();
-            uiSettings.setCompassEnabled(true);
-            uiSettings.setZoomControlsEnabled(true);
-            uiSettings.setMyLocationButtonEnabled(true);
 
             // Check if we were successful in obtaining the map.
             if (mGMap != null) {
@@ -106,44 +89,78 @@ public class MapsActivity extends FragmentActivity {
     }
 
     /**
-     * This is where we can add markers or lines, add listeners or move the camera. In this case, we
-     * just add a marker near Africa.
-     * <p/>
-     * This should only be called once and when we are sure that {@link #mGMap} is not null.
+     * Configura característiques del mapa com ara el tipus de vista i els
+     * controls que es mostraran.
      */
     private void setUpMap() {
-        mGMap.addMarker(new MarkerOptions().position(new LatLng(0, 0)).title("Marker"));
+
+        mGMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+
+        UiSettings uiSettings = mGMap.getUiSettings();
+        uiSettings.setCompassEnabled(true);
+        uiSettings.setZoomControlsEnabled(true);
+        uiSettings.setMyLocationButtonEnabled(true);
     }
 
-    /*
-    Do all of your database lookups and such in an AsyncTask.
-    You can still add the markers on the UI thread, but all of the data crunching will
-    be done on a background thread.
-    onPreExeecute(), onProgressUpdate(), and onPostExecute() all execute on the UI thread, so it's safe to do UI operations there.
+    /**
+     * Classe interna de tasca asíncrona per obtenir de la BD la
+     * informació necessaria per construir tots els marcadors que
+     * representaran els vehicles.
+     *
+     * La consulta a la BD i la construcció de cada marcador es fa
+     * al mètode doInBackground() que corre en un fil que no interfereix
+     * amb la UI. Així no es penalitza l'experiència de l'usuari en cas
+     * que hi hagi molts marcadors.
+     *
+     * La construcció dels marcadors es fa a partir de la classe auxiliar
+     * MarkersDataSource amb la qual obtindrem una List amb els marcadors.
+     *
+     * Les característiques de cada marcador les traspassem a l'API de Google MAps
+     * a partir de la classe MarkerOptions.
+     *
+     * Col·loquem al mapa cada marcador amb les seves característiques a través
+     * del mètode addMarker de l'objecte que representa el mapa.
+     *
+     * @param Params Void, no se li envia res en cridar-la
+     * @param Progress MarkerOptions, tipus de la unitat de progrés
+     *                 que es genera durant el processament en 2n pla i que es
+     *                 passa al mètode onProgressUpdate() que interactua amb la UI.
+     * @param Result, Void, el procés en 2n pla retorna null.
      */
     private class SetMarkersTask extends AsyncTask<Void, MarkerOptions, Void> {
 
-        protected void onPreExecute() {
-            // Turn progress spinner on
-            setProgressBarIndeterminateVisibility(false);
-        }
+        private MarkersDataSource data;
+        private MarkerOptions markerOptions;
 
+        /**
+         * Mètode que corre en un fil en 2n pla: no interfereix amb la UI
+         *
+         * @param params
+         * @return null
+         */
+        @Override
         protected Void doInBackground(Void... params) {
             // Does NOT run on UI thread
             // Long-running operations go here;
 
+            // Instanciem la classe auxiliar que permet obtenir els marcadors
+            // a partir de la informació de la BD
             data = new MarkersDataSource(context);
             try {
                 data.open();
 
             } catch (Exception e) {
-                Log.i("hello", "hello");
+                Log.i("MarkersDS", "No s'ha pogut obrir la BD...");
             }
 
+            // Carreguem en una llista els marcadors obtinguts de la BD
             List<MyMarker> m = data.getMyMarkers();
 
+            // Si obtenim marcadors
             if (!m.isEmpty()) {
 
+                // Obtenim les característiques de cada marcador i les
+                // passem a l'API de GMaps
                 for (int i = 0; i < m.size(); i++) {
                     double lat = m.get(i).getLat();
                     double lng = m.get(i).getLng();
@@ -154,20 +171,23 @@ public class MapsActivity extends FragmentActivity {
                             .snippet(m.get(i).getSnippet()
                             );
 
+                    // Enviem a onProgressUpdate les característiques
+                    // del marcador
+                    publishProgress(markerOptions);
                 }
-                publishProgress(markerOptions);
             }
             return null;
         }
 
+        /**
+         * Mètode que corre al fil de la UI
+         *
+         * @param params MarkerOptions, tipus de la unitat de progrés
+         */
+        @Override
         protected void onProgressUpdate(MarkerOptions... params) {
-            // Add newly-created marker to map
+            // Afegeix al mapa el marcador rebut
             mGMap.addMarker(params[0]);
-        }
-
-        protected void onPostExecute(Void result) {
-            // Turn off progress spinner
-            setProgressBarIndeterminateVisibility(false);
         }
     }
 }
