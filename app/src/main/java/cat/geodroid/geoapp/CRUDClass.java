@@ -172,8 +172,20 @@ public class CRUDClass {
 
     }
     //retorna un dispositiu
-    public void getDispositiu(){
+    public Dispositiu getDispositiu(String id_dispositiu){
+        Dispositiu aux;
 
+        String whereClause ="id_dipositiu = ? ";
+        String[] whereArgs = {id_dispositiu};
+        Cursor cursor = db.query(DataBaseHelper.TABLE_DISPOSITIU, null, whereClause, whereArgs, null, null, null);
+        cursor.moveToFirst();
+        if(cursor.getCount()==0){
+            aux = new Dispositiu();
+            aux.setId("-1");
+        }else{
+            aux = cursorToDis(cursor);
+        }
+        return aux;
     }
     //retorna la posició d'un dispositiu
     public void getPosition(){

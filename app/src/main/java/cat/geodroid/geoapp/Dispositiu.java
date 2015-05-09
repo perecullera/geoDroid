@@ -22,11 +22,12 @@ public class Dispositiu {
 
     }
 
-    public Dispositiu(String id, String nom,String flota, String vehicle){
+    public Dispositiu(String id, String nom,String flota, String vehicle, String empresa){
         this.id_dispositiu = id;
         this.id_flota = flota;
         this.vehicle = vehicle;
         this.nom = nom;
+        this.id_empresa = empresa;
     }
     public void setId(String id){
         this.id_dispositiu=id;
