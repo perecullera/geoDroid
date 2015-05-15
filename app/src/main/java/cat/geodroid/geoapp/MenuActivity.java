@@ -47,6 +47,7 @@ public class MenuActivity extends ActionBarActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MenuActivity.this, LlistaFlotaActivity.class);
+                intent.putExtra("empresa", dades.getInt("empresa"));
                 startActivity(intent);
             }
         });

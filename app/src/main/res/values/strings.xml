@@ -3,11 +3,13 @@
 <string name="title_activity_maps">Mapa - Geodroid</string>
 <string name="title_activity_login">Login - Geodroid</string>
 <string name="title_activity_menu">Menu - Geodroid</string>
+<string name="title_activity_llista_flota">Flotes - Geodroid</string>
+<string name="title_activity_dispositiu">Dispositiu - Geodroid</string>
 
 <string name="login_title">Login</string>
 <string name="menu_title">Menú</string>
 <string name="action_settings">Opcions</string>
-<string name="title_activity_llista_flota">Flotes - Geodroid</string>
+
 
 <string name="hello_world">Hello world!</string>
 

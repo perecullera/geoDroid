@@ -5,18 +5,18 @@ package cat.geodroid.geoapp;
  */
 public class Usuari {
     //TODO generate atributes, getters and setters
-    String id;
+    int id;
     String nom;
     int rol;
     String pwd;
-    String id_empresa;
+    int id_empresa;
     String email;
 
     public String getPwd() {
         return pwd;
     }
 
-    public String getId_empresa() {
+    public int getId_empresa() {
         return id_empresa;
     }
 
@@ -24,10 +24,10 @@ public class Usuari {
         return email;
     }
 
-    public void setId (String id){
+    public void setId (int id){
         this.id = id
 
-;    }
+        ;    }
     public void setNom(String nom){
         this.nom = nom;
     }
@@ -37,7 +37,7 @@ public class Usuari {
     public void setPwd (String pwd){
         this.pwd = pwd;
     }
-    public void setIdEmpresa(String id_empresa){
+    public void setIdEmpresa(int id_empresa){
         this.id_empresa = id_empresa;
     }
     public void setEmail(String email){
@@ -48,7 +48,7 @@ public class Usuari {
         return rol;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 

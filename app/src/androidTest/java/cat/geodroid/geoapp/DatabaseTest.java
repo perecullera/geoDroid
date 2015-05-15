@@ -11,7 +11,7 @@ import java.util.List;
  * Created by Joaquim Guinovart on 7/4/15.
  */
 public class DatabaseTest extends AndroidTestCase {
-    private DataBaseHelper helper;
+    /*private DataBaseHelper helper;
     RenamingDelegatingContext context;
     CRUDClass crud;
     SQLiteDatabase db;
@@ -26,24 +26,24 @@ public class DatabaseTest extends AndroidTestCase {
         helper = new DataBaseHelper(context);
         db = helper.getWritableDatabase();
 
-    }
+    }*/
 
     /**
      * Mètode per provar la creació i la conexió a la BDD
      */
-    public void testCreateDB(){
+    /*public void testCreateDB(){
         db = helper.getWritableDatabase();
         assertTrue(db.isOpen());
         db.close();
 
-    }
+    }*/
 
 
     /**
      * Mètode per provar l'addicció de dispositius a la BDD
      * Insereix el dispositiu dispositiu, i comprova que el mètode createDispositiu retorni true
      */
-    public void testAddDispositiu(){
+    /*public void testAddDispositiu(){
         try {
             crud.open();
         } catch (SQLException e) {
@@ -51,7 +51,7 @@ public class DatabaseTest extends AndroidTestCase {
         }
         assertEquals(true,crud.createDispositiu(dispositiu));
         //db.close();
-    }
+    }*/
 
     /**
      * Mètode per comprovar l'addicció de 2 dispositius i l'obtenció dels mateixos
@@ -59,7 +59,7 @@ public class DatabaseTest extends AndroidTestCase {
      * i comprova que retorni dos dispositius amb el mateix id que els introduits
      * @throws SQLException
      */
-    public void testGetDispositius() throws SQLException {
+    /*public void testGetDispositius() throws SQLException {
         crud.open();
         crud.createDispositiu(dispositiu);
         crud.createDispositiu(dispositiu2);
@@ -73,5 +73,5 @@ public class DatabaseTest extends AndroidTestCase {
     public void tearDown() throws Exception{
         helper.close();
         super.tearDown();
-    }
+    }*/
 }

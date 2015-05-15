@@ -12,8 +12,11 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import java.sql.SQLException;
+
 import java.util.ArrayList;
 import java.util.List;
+
+
 
 public class LoginActivity extends ActionBarActivity {
 
@@ -47,14 +50,16 @@ public class LoginActivity extends ActionBarActivity {
                 if(!email.getText().toString().matches("")||!contrasenya.getText().toString().matches("")) {
                     String text = email.getText().toString() + " i " + contrasenya.getText().toString() + " a comprovar a la BBDD";
 
-                    //Crear la funció a CRUDClass
+                    //Crear la funciÃ³ a CRUDClass
                     int existeixUsuari = 0; //
-                    debuging();
+
+                    //debuging();
+
                     //System.out.println("email= "+email.getText().toString()+" contrasenya = "+contrasenya.getText().toString());
                     Usuari u = crud.loguejaUsuari(email.getText().toString(), contrasenya.getText().toString());
 
                     Toast.makeText(context, u.getId()+" - ROL: "+u.getRol(), Toast.LENGTH_SHORT).show();
-                    existeixUsuari = Integer.parseInt(u.id);
+                    existeixUsuari = u.id;
 
                     if(existeixUsuari>=0) {
                         Intent intent = new Intent(LoginActivity.this, MenuActivity.class);
@@ -63,6 +68,7 @@ public class LoginActivity extends ActionBarActivity {
                         intent.putExtra("tipusUsuari", u.getRol());
                         intent.putExtra("idUsuari", u.getId());
                         intent.putExtra("empresa", u.getId_empresa());
+
                         startActivity(intent);
                     }else{
                         Toast.makeText(context, "Email i contrasenya no coincideixen", Toast.LENGTH_LONG).show();
@@ -80,7 +86,6 @@ public class LoginActivity extends ActionBarActivity {
                 Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
             }
         });
-
     }
 
     @Override
@@ -104,23 +109,28 @@ public class LoginActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+/*
     public void debuging(){
         Usuari u = new Usuari();
-        u.setId("12");
+        //u.setId("12");
         u.setNom("emilio");
         u.setEmail("email@email.com");
         u.setRol(1);
         u.setPwd("password");
-        u.setIdEmpresa("2");
+        u.setIdEmpresa(1);
         crud.createUsuari(u);
+    }
+*/
 
+/*
         List<Dispositiu> llista = new ArrayList<Dispositiu>();
-        Dispositiu dis1 = new Dispositiu("1","dispositiu1","flota1","vehicle1", "2");
-        Dispositiu dis2 = new Dispositiu("2","dispositiu2","flota2","vehicle2", "2");
-        Dispositiu dis3 = new Dispositiu("3","dispositiu3","flota2","vehicle3", "1");
-        Dispositiu dis4 = new Dispositiu("4","dispositiu4","flota2","vehicle4", "2");
-        Dispositiu dis5 = new Dispositiu("5","dispositiu5","flota1","vehicle5", "1");
-        Dispositiu dis6 = new Dispositiu("6","dispositiu6","flota1","vehicle6", "2");
+        Dispositiu dis1 = new Dispositiu("dispositiu1", 1, "vehicle1", "2");
+        Dispositiu dis2 = new Dispositiu("dispositiu2", 2, "vehicle2", "2");
+        Dispositiu dis3 = new Dispositiu("dispositiu3", 2, "vehicle3", "1");
+        Dispositiu dis4 = new Dispositiu("dispositiu4", 2, "vehicle4", "2");
+        Dispositiu dis5 = new Dispositiu("dispositiu5", 1, "vehicle5", "1");
+        Dispositiu dis6 = new Dispositiu("dispositiu6", 1, "vehicle6", "2");
         dis1.setPosition(2.135913,41.376800);
         dis2.setPosition(2.164091,41.407504);
         dis3.setPosition(2.204363,41.400529);
@@ -137,4 +147,6 @@ public class LoginActivity extends ActionBarActivity {
             crud.createDispositiu(llista.get(i));
         }
     }
+*/
+
 }

@@ -236,8 +236,8 @@ public class MapsActivity extends FragmentActivity {
         //DEBUG
 
 
-        List<Dispositiu> llista = new ArrayList<Dispositiu>();
-        Dispositiu dis1 = new Dispositiu("id1","dispositiu1","flota1","vehicle1");
+        /*List<Dispositiu> llista = new ArrayList<Dispositiu>();
+        Dispositiu dis1 = new Dispositiu("id1","dispositiu1","flota1","vehicle1", "2");
         Dispositiu dis2 = new Dispositiu("id2","dispositiu2","flota2","vehicle2");
         Dispositiu dis3 = new Dispositiu("id3","dispositiu3","flota2","vehicle3");
         Dispositiu dis4 = new Dispositiu("id4","dispositiu4","flota2","vehicle4");
@@ -251,7 +251,7 @@ public class MapsActivity extends FragmentActivity {
         llista.add(dis4);
         for(int i = 0; i<llista.size();i++){
             data.createDispositiu(llista.get(i));
-            ;        }
+        }*/
     }
 
 }

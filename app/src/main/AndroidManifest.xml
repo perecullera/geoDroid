@@ -55,6 +55,10 @@
             android:name=".LlistaFlotaActivity"
             android:label="@string/title_activity_llista_flota" >
         </activity>
+        <activity
+            android:name=".DispositiuActivity"
+            android:label="@string/title_activity_dispositiu" >
+        </activity>
     </application>
 
 </manifest>

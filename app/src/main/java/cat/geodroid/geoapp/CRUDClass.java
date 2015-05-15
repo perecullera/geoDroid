@@ -18,21 +18,18 @@ public class CRUDClass {
 
     public CRUDClass(Context context){
         DBH = new DataBaseHelper(context);
-
     }
-    //TODO retorn dels mètodes i paràmetres
 
+    //TODO retorn dels mÃ¨todes i parÃ metres
 
     public void open() throws SQLException{
         db = DBH.getWritableDatabase();
     }
 
-
     //--------CREATE---------
 
-
     /**
-     * Mètode per a introduir una nova empresa a la BDD
+     * MÃ¨tode per a introduir una nova empresa a la BDD
      * @param empresa que es vol introduir a la BDD
      * @return retorna cert si s'ha pogut introduir fals en cas contrari
      */
@@ -40,26 +37,26 @@ public class CRUDClass {
         try {
             ContentValues cv = new ContentValues();
             cv.put("id_empresa","id");
-        }catch (Exception ex){
+        } catch (Exception ex) {
 
         }
         return false;
     }
 
     /**
-     * Mètode per a introduir un nou usuari a la BDD
+     * MÃ¨tode per a introduir un nou usuari a la BDD
      * @param usuari usuari a introduir
      * @return retorna cert si s'ha pogut introduir fals en cas contrari
      */
     public boolean createUsuari(Usuari usuari){
         ContentValues cv = new ContentValues();
         try {
-            cv.put("id_usuari",usuari.getId());
-            cv.put("nom",usuari.getNom());
-            cv.put("email",usuari.getEmail());
-            cv.put("rol",usuari.getRol());
-            cv.put("pwd",usuari.getPwd());
-            cv.put("id_usuari_empresa",usuari.getId_empresa());
+            //cv.put("id_usuari", usuari.getId());
+            cv.put("nom", usuari.getNom());
+            cv.put("email", usuari.getEmail());
+            cv.put("rol", usuari.getRol());
+            cv.put("pwd", usuari.getPwd());
+            cv.put("id_usuari_empresa", usuari.getId_empresa());
             db.insert(DBH.TABLE_USUARI, null, cv);
         } catch (Exception e) {
             e.printStackTrace();
@@ -69,7 +66,7 @@ public class CRUDClass {
     }
 
     /**
-     * Mètode per a introduir nous detalls a la BDD
+     * MÃ¨tode per a introduir nous detalls a la BDD
      * @param detalls detalls a introduir a la BDD
      * @return retorna cert si s'ha pogut introduir fals en cas contrari
      */
@@ -78,35 +75,33 @@ public class CRUDClass {
     }
 
     /**
-     * Mètode per a introduir un nou dispositiu a la BDD
+     * MÃ¨tode per a introduir un nou dispositiu a la BDD
      * @param dispositiu dispositiu a introduir a la BDD
      * @return retorna cert si s'ha pogut introduir fals en cas contrari
      */
     public boolean createDispositiu(Dispositiu dispositiu){
         try{
             ContentValues cv = new ContentValues();
-            cv.put("id_dispositiu",dispositiu.getId());
-            cv.put("nom",dispositiu.getNom());
-            cv.put("flota",dispositiu.getFlota());
-            cv.put("vehicle",dispositiu.getVehicle());
-            cv.put("longitud",dispositiu.getLong());
-            cv.put("latitud",dispositiu.getLat());
+            //cv.put("id_dispositiu", dispositiu.getId());
+            cv.put("nom", dispositiu.getNom());
+            cv.put("flota", dispositiu.getFlota());
+            cv.put("vehicle", dispositiu.getVehicle());
+            cv.put("latitud", dispositiu.getLat());
+            cv.put("longitud", dispositiu.getLong());
+            cv.put("id_dispositiu_empresa", dispositiu.getId_empresa());
+            cv.put("id_dispositiu_usuari", dispositiu.getId_usuari());
             db.insert(DBH.TABLE_DISPOSITIU, null, cv);
             return true;
-        }catch(Exception ex){
+        } catch(Exception ex) {
             System.out.print(ex);
             return false;
         }
-
     }
-
-
 
     //-------------READ-------------
 
-
     /**
-     * Mètode per a obtindre una empresa de la bDD donat el seu identificador
+     * MÃ¨tode per a obtindre una empresa de la bDD donat el seu identificador
      * @param id identificador de l'empresa a retornar
      * @return retorna l'empresa en cas que existeixi, null en cas q no existeixi
      */
@@ -115,10 +110,8 @@ public class CRUDClass {
         return empresa;
     }
 
-
-
     /**
-     * Mètode per a recuperar totes les empreses emmagatzemades a la BDD
+     * MÃ¨tode per a recuperar totes les empreses emmagatzemades a la BDD
      * @return llista amb totes les empreses de la BDD
      */
     public List <Empresa> getEmpreses(){
@@ -127,67 +120,66 @@ public class CRUDClass {
     }
 
     /**
-     * Mètode que retorna un usari dónat el seu identificador
+     * MÃ¨tode que retorna un usari dÃ³nat el seu identificador
      * @param id identificador de l'usuari a buscar
      * @return retorna usuari en cas q existeixi, null en cas q no existeixi
      */
     public Usuari getUsuari(int id){
         Usuari usuari = new Usuari();
         return usuari;
-
     }
 
     /**
      *
      * @param nom nom de l'usuari
      * @param pwd password de l'usuari
-     * @return 0 no hi ha cap usuari amb aquest password 1 és usuari administrador 2 és usuari conductor
+     * @return 0 no hi ha cap usuari amb aquest password 1 Ã©s usuari administrador 2 Ã©s usuari conductor
      */
     public Usuari loguejaUsuari(String nom, String pwd){
         Usuari usuari = new Usuari();
         String whereClause ="nom = ? AND pwd = ?";
-        String[] whereArgs = {nom,pwd};
+        String[] whereArgs = {nom, pwd};
         Cursor cursor = db.query(DataBaseHelper.TABLE_USUARI, null, whereClause, whereArgs, null, null, null);
         cursor.moveToFirst();
-        if(cursor.getCount()==0){
+        if (cursor.getCount()==0) {
             return null;
-        }else{
+        } else {
             usuari = cursorToUsuari(cursor);
         }
         return usuari;
-
     }
 
-
     /**
-     * Mètode que retorna tots els usuaris de la BDD
+     * MÃ¨tode que retorna tots els usuaris de la BDD
      * @return llista amb tots els usuaris de la BDD
      */
     public List<Usuari> getUsuaris(){
         List <Usuari> llistaUsuaris = new ArrayList<Usuari>();
         return llistaUsuaris;
     }
+
     //retorna els detalls d'un dispositiu
     public void getDetalls(){
 
     }
+
     //retorna un dispositiu
-    public Dispositiu getDispositiu(String id_dispositiu){
+    public Dispositiu getDispositiu(String nom){ //int id_dispositiu){
         Dispositiu aux;
 
-        String whereClause ="id_dipositiu = ? ";
-        String[] whereArgs = {id_dispositiu};
+        String whereClause = "nom = ? ";
+        String[] whereArgs = {nom};
         Cursor cursor = db.query(DataBaseHelper.TABLE_DISPOSITIU, null, whereClause, whereArgs, null, null, null);
         cursor.moveToFirst();
-        if(cursor.getCount()==0){
+        if (cursor.getCount() == 0) {
             aux = new Dispositiu();
-            aux.setId("-1");
-        }else{
+            aux.setId(-1);
+        } else {
             aux = cursorToDis(cursor);
         }
         return aux;
     }
-    //retorna la posició d'un dispositiu
+    //retorna la posiciÃ³ d'un dispositiu
     public void getPosition(){
 
     }
@@ -212,10 +204,10 @@ public class CRUDClass {
         cursor.close();
         return llistaDispositius;
     }
-    public List<Dispositiu> getDispositiusEmpresa(String Empresa){
+    public List<Dispositiu> getDispositiusEmpresa(int empresa){
         List<Dispositiu> llistaDispositius = new ArrayList<Dispositiu>();
         String whereClause="id_dispositiu_empresa = ?";
-        String[] whereArgs ={Empresa};
+        String[] whereArgs ={String.valueOf(empresa)};
         Cursor cursor = db.query(DBH.TABLE_DISPOSITIU, null, whereClause, whereArgs, null, null, null);
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
@@ -245,15 +237,16 @@ public class CRUDClass {
     public boolean updateDispositiu(Dispositiu dis){
         ContentValues cv = new ContentValues();
         String whereClause = "id_dispositiu = ?";
-        String[] wwhereArgs ={dis.getId()};
-        cv.put("id_dispositiu",dis.getId());
-        cv.put("nom",dis.getNom());
-        cv.put("flota",dis.getFlota());
-        cv.put("vehicle",dis.getVehicle());
-        cv.put("longitud",dis.getLong());
-        cv.put("latitud",dis.getLat());
+        String[] whereArgs ={String.valueOf(dis.getId())};
+        //cv.put("id_dispositiu", dis.getId());
+        cv.put("nom", dis.getNom());
+        cv.put("flota", dis.getFlota());
+        cv.put("vehicle", dis.getVehicle());
+        cv.put("latitud", dis.getLat());
+        cv.put("longitud", dis.getLong());
+        cv.put("id_dispositiu_empresa", dis.getId_empresa());
         try {
-            db.update(DBH.TABLE_DISPOSITIU, cv,whereClause,wwhereArgs );
+            db.update(DBH.TABLE_DISPOSITIU, cv, whereClause, whereArgs );
             return true;
         }catch(Exception ex){
             System.out.println("Error al actualitzar el dispositiu "+ dis +" "+ ex);
@@ -265,7 +258,6 @@ public class CRUDClass {
     public void updatePosicio(Dispositiu dis){
 
     }
-
 
     //------------DELETE------------
 
@@ -281,7 +273,7 @@ public class CRUDClass {
     }
     public void deleteDispositiu(){
 
-    }//delete posció
+    }//delete posciÃ³
     public void deletePosicio(){
 
     }
@@ -297,15 +289,15 @@ public class CRUDClass {
     //------------ AUXILIAR-----------------
 
     /**
-     * Mètode auxiliar per a passar el cursor de dispositius a Dispositius
+     * MÃ¨tode auxiliar per a passar el cursor de dispositius a Dispositius
      * @param cursor amb els dispositius retornat per getDispositius
      * @return llista amb els dispositius
      */
     public Dispositiu cursorToDis(Cursor cursor){
         Dispositiu dis = new Dispositiu();
-        dis.setId(cursor.getString(0));
+        //dis.setId(cursor.getString(0));
         dis.setNom(cursor.getString(1));
-        dis.setFlota(cursor.getString(2));
+        dis.setFlota(cursor.getInt(2));
         dis.setVehicle(cursor.getString(5));
         dis.setPosition(cursor.getDouble(3),cursor.getDouble(4));
 
@@ -313,13 +305,19 @@ public class CRUDClass {
     }
     private Usuari cursorToUsuari(Cursor cursor) {
         Usuari us = new Usuari();
-        us.setId(cursor.getString(0));
+        //us.setId(cursor.getString(0));
         us.setNom(cursor.getString(1));
         us.setEmail(cursor.getString(2));
         us.setRol(cursor.getInt(3));
         us.setPwd(cursor.getString(4));
-        us.setIdEmpresa(cursor.getString(5));
+        us.setIdEmpresa(cursor.getInt(5));
         return us;
     }
 
+    private Empresa cursorToEmpresa(Cursor cursor) {
+        Empresa emp = new Empresa();
+
+
+        return emp;
+    }
 }

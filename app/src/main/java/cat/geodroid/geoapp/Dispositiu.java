@@ -7,32 +7,27 @@ import com.google.android.gms.maps.model.LatLng;
  */
 public class Dispositiu {
     //TODO generate atributes, getters and setters
-    private String id_dispositiu;
-    private String id_flota;
+    private int id_dispositiu;
+    private int id_flota;
     private Double longitud;
     private Double latitud;
     private String vehicle;
     private String carrega;
-    private String id_empresa;
-    private String id_usuari;
+    private int id_empresa;
+    private int id_usuari;
     private String nom;
-
 
     public Dispositiu(){
 
     }
 
-    public Dispositiu(String id, String nom,String flota, String vehicle, String empresa){
-        this.id_dispositiu = id;
+    public Dispositiu (String nom, int flota, String vehicle, String empresa) {
+        this.nom = nom;
         this.id_flota = flota;
         this.vehicle = vehicle;
-        this.nom = nom;
-        this.id_empresa = empresa;
     }
-    public void setId(String id){
-        this.id_dispositiu=id;
-    }
-    public void setFlota(String flota){
+
+    public void setFlota(int flota){
         this.id_flota = flota;
     }
     public void setNom(String nom){
@@ -46,22 +41,19 @@ public class Dispositiu {
         this.vehicle=vehicle;
     }
 
+    public void setId(int id){ this.id_dispositiu = id; }
     public void setCarrega(String Carrega){
         this.carrega = carrega;
     }
-    public void setEmpresa(String empresa){
+    public void setEmpresa(int empresa){
         this.id_empresa = empresa;
     }
-    public void setUsuari(String usuari){
+    public void setUsuari(int usuari){
         this.id_usuari = usuari;
     }
 
-    public String getId(){
-        return id_dispositiu;
-    }
-    public String getFlota(){
-        return id_flota;
-    }
+    public int getId(){ return id_dispositiu; }
+    public int getFlota(){ return id_flota; }
     public Double getLong(){
         return longitud;
     }
@@ -74,10 +66,10 @@ public class Dispositiu {
     public String getCarrega(){
         return carrega;
     }
-    public String getId_empresa(){
+    public int getId_empresa(){
         return id_empresa;
     }
-    public String getId_usuari(){
+    public int getId_usuari(){
         return id_usuari;
     }
     public LatLng getPosition() {
