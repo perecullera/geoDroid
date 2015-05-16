@@ -27,6 +27,10 @@ public class MenuActivity extends ActionBarActivity {
 
         dades = getIntent().getExtras();
 
+        /**
+         * Si tipusUsuari no es ADMIN, no podra
+         * accedir a edicio de flotes
+         */
         if(dades.getInt("tipusUsuari")==0){
             editaButton.setVisibility(View.INVISIBLE);
         }

@@ -20,9 +20,7 @@ public class Dispositiu {
     /**
      * Constructor buit de Dispositiu
      */
-    public Dispositiu() {
-
-    }
+    public Dispositiu() {}
 
     /**
      * Constructor amb elements de Dispositiu
@@ -59,7 +57,7 @@ public class Dispositiu {
      * @param longitud
      * @param latitud
      */
-    public void setPosition(Double longitud, Double latitud) {
+    public void setPosition(Double latitud, Double longitud) {
         this.longitud = longitud;
         this.latitud = latitud;
     }
@@ -106,7 +104,7 @@ public class Dispositiu {
 
     /**
      * Getter id Dispositiu
-     * @return
+     * @return int id_dispositiu
      */
     public int getId() {
         return id_dispositiu;
@@ -114,7 +112,7 @@ public class Dispositiu {
 
     /**
      * Getter flota Dispositiu
-     * @return
+     * @return String flota
      */
     public String getFlota() {
         return flota;
@@ -122,7 +120,7 @@ public class Dispositiu {
 
     /**
      * Getter longitud Dispositiu
-     * @return
+     * @return Double longitud
      */
     public Double getLong() {
         return longitud;
@@ -130,7 +128,7 @@ public class Dispositiu {
 
     /**
      * Getter latitud Dispositiu
-     * @return
+     * @return Double latitud
      */
     public Double getLat() {
         return latitud;
@@ -138,7 +136,7 @@ public class Dispositiu {
 
     /**
      * Getter vehicle Dispositiu
-     * @return
+     * @return String vehicle
      */
     public String getVehicle() {
         return vehicle;
@@ -146,7 +144,7 @@ public class Dispositiu {
 
     /**
      * Getter carrega Dispositiu
-     * @return
+     * @return String carrega
      */
     public String getCarrega() {
         return carrega;
@@ -154,7 +152,7 @@ public class Dispositiu {
 
     /**
      * Getter id_empresa Dispositiu
-     * @return
+     * @return int id_empresa
      */
     public int getId_empresa() {
         return id_empresa;
@@ -162,7 +160,7 @@ public class Dispositiu {
 
     /**
      * Getter id_usuari Dispositiu
-     * @return
+     * @return int id_usuari
      */
     public int getId_usuari() {
         return id_usuari;
@@ -170,7 +168,7 @@ public class Dispositiu {
 
     /**
      * Getter posicio Dispositiu
-     * @return
+     * @return LatLong latLong
      */
     public LatLng getPosition() {
         LatLng latlong = new LatLng(latitud, longitud);
@@ -179,7 +177,7 @@ public class Dispositiu {
 
     /**
      * Getter nom Dispositiu
-     * @return
+     * @return String nom
      */
     public String getNom() {
         return nom;

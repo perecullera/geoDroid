@@ -8,30 +8,41 @@ import android.database.sqlite.SQLiteOpenHelper;
  * Created by Joaquim Guinovart, Raul Ortega, Victor LluciÃ , Ricard Moya  on 31/3/15.
  */
 class DataBaseHelper extends SQLiteOpenHelper {
-    // Logcat tag
+    /**
+    * Logcat tag
+    */
     private static final String LOG = "Databasehelper";
 
-    // Database Version
+    /**
+    * Database Version
+    */
     private static final int DATABASE_VERSION = 1;
 
-    // Database Name
+    /**
+    * Database Name
+    */
     private static final String DATABASE_NAME = "geoDroid";
 
-    // Table Names
+    /**
+    * Table Names
+    */
     protected static final String TABLE_EMPRESA = "empresa";
     protected static final String TABLE_USUARI = "usuari";
     private static final String TABLE_DETALLS = "detalls";
     public static final String TABLE_DISPOSITIU = "dispositiu";
 
-    // Table Create Statements
-    // Empresa table create statement
+    /**
+    * Table Create Statements
+    * Empresa table create statement
+    */
     private static final String CREATE_TABLE_EMPRESA =
             "CREATE TABLE "+ TABLE_EMPRESA +" (" +
                     "id_empresa INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "nom VARCHAR (50) NOT NULL)";
 
-    //Usuari table create statement
-    //
+    /**
+     * Usuari table create statement
+     */
     private static final String CREATE_TABLE_USUARI =
             "CREATE TABLE "+ TABLE_USUARI +" (" +
                     "id_usuari INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -42,13 +53,17 @@ class DataBaseHelper extends SQLiteOpenHelper {
                     "id_usuari_empresa INTEGER," +
                     "FOREIGN KEY (id_usuari_empresa) REFERENCES empresa (id_empresa))";
 
-    //detalls table create statement
+    /**
+     * detalls table create statement
+     */
     private static final String CREATE_TABLE_DETALLS =
             "CREATE TABLE "+ TABLE_DETALLS + " (" +
                     "id_detalls INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "nom VARCHAR (50))";
 
-    //Dispositiu table create statement
+    /**
+     * Dispositiu table create statement
+     */
     private static final String CREATE_TABLE_DISPOSITIU =
             "CREATE TABLE "+ TABLE_DISPOSITIU +" (" +
                     "id_dispositiu INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -63,7 +78,9 @@ class DataBaseHelper extends SQLiteOpenHelper {
                     "FOREIGN KEY (id_dispositiu_empresa) REFERENCES empresa(id_empresa)," +
                     "FOREIGN KEY (id_dispositiu_usuari) REFERENCES usuari(id_usuari))";
 
-    // SentÃ¨ncia SQL per inserir dades de simulaciÃ³
+    /**
+     * Sentencia SQL per inserir dades de simulacio DISPOSITIUS
+     */
     private static final String DB_PREPOPULATE_DISPOSITIUS =
             "insert into "+ TABLE_DISPOSITIU
                     + " (nom, flota, latitud, longitud, vehicle, carrega, id_dispositiu_empresa, id_dispositiu_usuari) "
@@ -76,6 +93,9 @@ class DataBaseHelper extends SQLiteOpenHelper {
                     + "('dispositiu6', 'flota1', 2.125913, 41.376800, 'vehicle6', '', 2, 1);"
             ;
 
+    /**
+     * Sentencia SQL per inserir dades de simulacio EMPRESA
+     */
     private static final String DB_PREPOPULATE_EMPRESA =
             "insert into "+ TABLE_EMPRESA
                     + " (nom) "
@@ -88,13 +108,17 @@ class DataBaseHelper extends SQLiteOpenHelper {
                     + "('empresa6');"
             ;
 
+    /**
+     * Sentencia SQL per inserir dades de simulacio USUARI
+     */
     private static final String DB_PREPOPULATE_USUARI =
             "insert into "+ TABLE_USUARI
                     + " (nom, email, rol, pwd, id_usuari_empresa) "
                     + "values "
-                    + "('emilio', 'email@email.com', 1, 'password', 1), "
+                    + "('admin', 'email@email.com', 1, 'password', 1), "
                     + "('laia', 'e@ema.com', 1, 'p', 2), "
                     + "('u', 'mail@mail.cat', 1, 'p', 1);"
+                    + "('conductor', 'simple@mail.cat',2,'p',2)";
             ;
 
     public DataBaseHelper(Context context)  {
@@ -102,7 +126,7 @@ class DataBaseHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * MÃ¨tode per crear les taules de la bdd si Ã©s necessari
+     * Metode per crear les taules de la bdd si es necessari
      * @param db
      */
     @Override
@@ -118,6 +142,12 @@ class DataBaseHelper extends SQLiteOpenHelper {
         db.execSQL(DB_PREPOPULATE_USUARI);
     }
 
+    /**
+     * Metode per eliminar les taules al actualitzar
+     * @param db
+     * @param oldVersion
+     * @param newVersion
+     */
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         //on upgrade drop older tables

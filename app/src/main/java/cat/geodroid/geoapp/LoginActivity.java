@@ -30,7 +30,11 @@ public class LoginActivity extends ActionBarActivity {
 
         context = this;
         crud = new CRUDClass(context);
+        /**
+         * Obrim BBDD, sino capturem ERROR
+         */
         try {
+
             crud.open();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -51,10 +55,18 @@ public class LoginActivity extends ActionBarActivity {
             public void onClick(View v) {
             if(!email.getText().toString().matches("")||!contrasenya.getText().toString().matches("")) {
                 int existeixUsuari = 0;
+
+                /**
+                 * Busquem usuari amb les dades dels EditText
+                 */
                 Usuari u = crud.loguejaUsuari(email.getText().toString(), contrasenya.getText().toString());
 
                 existeixUsuari = u.id;
 
+                /**
+                 * Si ha trobat l'usuari, carreguem dades a un Bundle,
+                 * fem un intent i l'executem
+                 */
                 if(existeixUsuari>=0) {
                     Intent intent = new Intent(LoginActivity.this, MenuActivity.class);
                     intent.putExtra("email", email.getText().toString());
@@ -80,8 +92,8 @@ public class LoginActivity extends ActionBarActivity {
         rememberButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                String text = "A implementar en un futur, envia'ns un correu a hola@geodroid.cat per a mes info";
-                Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
+            String text = "A implementar en un futur, envia'ns un correu a hola@geodroid.cat per a mes info";
+            Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
             }
         });
     }

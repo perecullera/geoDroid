@@ -161,7 +161,7 @@ public class CRUDClass {
     }
 
     /**
-     * MÃ¨tode que retorna tots els usuaris de la BDD
+     * Metode que retorna tots els usuaris de la BDD
      * @return llista amb tots els usuaris de la BDD
      */
     public List<Usuari> getUsuaris(){
@@ -174,7 +174,11 @@ public class CRUDClass {
 
     }
 
-    //retorna un dispositiu
+    /**
+     * Retorna un dispositiu
+     * @param id_dispositiu
+     * @return aux Dispositiu
+     */
     public Dispositiu getDispositiu(int id_dispositiu){
         Dispositiu aux;
 
@@ -215,6 +219,12 @@ public class CRUDClass {
         cursor.close();
         return llistaDispositius;
     }
+
+    /**
+     * Retorna un llistat de dispositius filtrats per empresa
+     * @param empresa id de l'empresa
+     * @return List<Dispositius>
+     */
     public List<Dispositiu> getDispositiusEmpresa(int empresa){
         List<Dispositiu> llistaDispositius = new ArrayList<Dispositiu>();
         String whereClause="id_dispositiu_empresa = ?";
@@ -244,7 +254,11 @@ public class CRUDClass {
     public void updateDetalls(){
 
     }
-    //update dispositiu
+
+    /**
+     * Actualitzem el dispositiu segons Dispositiu
+     */
+
     public boolean updateDispositiu(Dispositiu dis){
         ContentValues cv = new ContentValues();
         String whereClause = "id_dispositiu = ?";
@@ -266,9 +280,7 @@ public class CRUDClass {
 
     }
     //update de la posicio
-    public void updatePosicio(Dispositiu dis){
-
-    }
+    public void updatePosicio(Dispositiu dis){}
 
     //------------DELETE------------
 
@@ -300,9 +312,9 @@ public class CRUDClass {
     //------------ AUXILIAR-----------------
 
     /**
-     * MÃ¨tode auxiliar per a passar el cursor de dispositius a Dispositius
-     * @param cursor amb els dispositius retornat per getDispositius
-     * @return llista amb els dispositius
+     * Metode auxiliar per a passar el cursor de dispositiu a Dispositiu
+     * @param cursor amb el dispositiu a retornar
+     * @return dispositiu
      */
     public Dispositiu cursorToDis(Cursor cursor){
         Dispositiu dis = new Dispositiu();
@@ -315,6 +327,12 @@ public class CRUDClass {
 
         return dis;
     }
+
+    /**
+     * Metode auxiliar per a passar el cursor d'usuari a Usuari
+     * @param cursor amb l'usuari a retornar
+     * @return usuari
+     */
     private Usuari cursorToUsuari(Cursor cursor) {
         Usuari us = new Usuari();
 
@@ -328,6 +346,11 @@ public class CRUDClass {
         return us;
     }
 
+    /**
+     * Metode auxiliar per a passar el cursor d'empresa a Empresa
+     * @param cursor amb l'empresa a retornar
+     * @return empresa
+     */
     private Empresa cursorToEmp(Cursor cursor) {
         Empresa emp = new Empresa();
 

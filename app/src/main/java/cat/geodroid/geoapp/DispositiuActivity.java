@@ -28,6 +28,10 @@ public class DispositiuActivity extends ActionBarActivity {
         context = this;
         dades = getIntent().getExtras();
 
+        /**
+         * Cerquem el dispositiu a la BBDD amb les
+         * dades passades al Bundle
+         */
         int idDispositiu = dades.getInt("idDispositiu");
         final Dispositiu dis = crud.getDispositiu(idDispositiu);
 
@@ -39,22 +43,30 @@ public class DispositiuActivity extends ActionBarActivity {
         nom.setText(dis.getNom());
         flota.setText(dis.getFlota());
 
+        /**
+         * Boto que gestion l'actualitzacio del dispositiu
+         */
         actualitzar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                dis.setNom(nom.getText().toString());
-                dis.setFlota(flota.getText().toString());
+            dis.setNom(nom.getText().toString());
+            dis.setFlota(flota.getText().toString());
 
-                boolean success = crud.updateDispositiu(dis);
-                if(success){
-                    Toast.makeText(context, "Actualitzat correctament", Toast.LENGTH_SHORT).show();
-                }else{
-                    Toast.makeText(context, "Actualitzat erroneament", Toast.LENGTH_SHORT).show();
-                }
+            boolean success = crud.updateDispositiu(dis);
+            if(success){
+                Toast.makeText(context, "Actualitzat correctament, prem enrere per tornar a la llista", Toast.LENGTH_SHORT).show();
+            }else{
+                Toast.makeText(context, "Actualitzat erroneament", Toast.LENGTH_SHORT).show();
+            }
             }
         });
 
-        //Carreguem vista des dels Markers de GMAPS. Anulem la possible edicio dels dispositius
+
+        /**
+         * EN UN FUTUR
+         * Carreguem vista des dels Markers de GMAPS. Anulem la possible edicio dels dispositius
+         */
+
         /*if(dades.getString("ubicacio")=="mapa") {
             //
             nom.setEnabled(false);

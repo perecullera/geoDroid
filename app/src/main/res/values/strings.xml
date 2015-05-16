@@ -1,5 +1,5 @@
 <resources>
-<string name="app_name">Geodroid</string>
+<string name="app_name">GeoFlot</string>
 <string name="title_activity_maps">Mapa - Geodroid</string>
 <string name="title_activity_login">Login - Geodroid</string>
 <string name="title_activity_menu">Menu - Geodroid</string>

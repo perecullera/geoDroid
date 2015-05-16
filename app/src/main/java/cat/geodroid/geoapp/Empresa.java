@@ -33,7 +33,7 @@ public class Empresa {
 
     /**
      * Getter id Empresa
-     * @return
+     * @return int id
      */
     public int getId() {
         return id;
@@ -49,7 +49,7 @@ public class Empresa {
 
     /**
      * Getter nom Empresa
-     * @return
+     * @return String nom
      */
     public String getNom() {
         return nom;

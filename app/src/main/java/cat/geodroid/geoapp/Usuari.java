@@ -14,7 +14,7 @@ public class Usuari {
 
     /**
      * Getter password Usuari
-     * @return
+     * @return String pwd
      */
     public String getPwd() {
         return pwd;
@@ -22,7 +22,7 @@ public class Usuari {
 
     /**
      * Getter id_empresa Usuari
-     * @return
+     * @return int id_empresa
      */
     public int getId_empresa() {
         return id_empresa;
@@ -30,7 +30,7 @@ public class Usuari {
 
     /**
      * Getter email Usuari
-     * @return
+     * @return String email
      */
     public String getEmail() {
         return email;
@@ -86,7 +86,7 @@ public class Usuari {
 
     /**
      * Getter rol Usuari
-     * @return
+     * @return int rol
      */
     public int getRol() {
         return rol;
@@ -94,7 +94,7 @@ public class Usuari {
 
     /**
      * Getter id Usuari
-     * @return
+     * @return int id
      */
     public int getId() {
         return id;
@@ -102,7 +102,7 @@ public class Usuari {
 
     /**
      * Getter nom Usuari
-     * @return
+     * @return String nom
      */
     public String getNom() {
         return nom;

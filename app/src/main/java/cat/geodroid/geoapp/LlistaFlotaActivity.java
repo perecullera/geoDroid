@@ -34,7 +34,7 @@ public class LlistaFlotaActivity extends ActionBarActivity {
         crud = new CRUDClass(context);
 
         /**
-         *
+         * Carreguem tots els dispositius relacionats al usuari a la List
          */
         List<Dispositiu> dispositius = crud.getDispositiusEmpresa(dades.getInt("empresa"));
 
@@ -95,7 +95,7 @@ public class LlistaFlotaActivity extends ActionBarActivity {
          * @param position
          * @param convertView
          * @param parent
-         * @return
+         * @return View convertView
          */
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {

@@ -233,25 +233,6 @@ public class MapsActivity extends FragmentActivity {
      * Mètode per a insertar dispositius posicionats per a debugging
      */
     protected void debugging(){
-        //DEBUG
-
-
-        /*List<Dispositiu> llista = new ArrayList<Dispositiu>();
-        Dispositiu dis1 = new Dispositiu("id1","dispositiu1","flota1","vehicle1", "2");
-        Dispositiu dis2 = new Dispositiu("id2","dispositiu2","flota2","vehicle2");
-        Dispositiu dis3 = new Dispositiu("id3","dispositiu3","flota2","vehicle3");
-        Dispositiu dis4 = new Dispositiu("id4","dispositiu4","flota2","vehicle4");
-        dis1.setPosition(2.135913,41.376800);
-        dis2.setPosition(2.164091,41.407504);
-        dis3.setPosition(2.204363,41.400529);
-        dis4.setPosition(2.080033, 41.367781);
-        llista.add(dis1);
-        llista.add(dis2);
-        llista.add(dis3);
-        llista.add(dis4);
-        for(int i = 0; i<llista.size();i++){
-            data.createDispositiu(llista.get(i));
-        }*/
     }
 
 }
