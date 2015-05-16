@@ -102,12 +102,23 @@ public class CRUDClass {
 
     /**
      * MÃ¨tode per a obtindre una empresa de la bDD donat el seu identificador
-     * @param id identificador de l'empresa a retornar
+     * @param id_empresa identificador de l'empresa a retornar
      * @return retorna l'empresa en cas que existeixi, null en cas q no existeixi
      */
-    public Empresa getEmpresa(int id){
-        Empresa empresa = new Empresa();
-        return empresa;
+    public Empresa getEmpresa(int id_empresa){
+        Empresa emp;
+
+        String whereClause = "id_empresa = ? ";
+        String[] whereArgs = {String.valueOf(id_empresa)};
+        Cursor cursor = db.query(DataBaseHelper.TABLE_EMPRESA, null, whereClause, whereArgs, null, null, null);
+        cursor.moveToFirst();
+        if (cursor.getCount() == 0) {
+            emp = new Empresa();
+            emp.setId(-1);
+        } else {
+            emp = cursorToEmp(cursor);
+        }
+        return emp;
     }
 
     /**
@@ -164,11 +175,11 @@ public class CRUDClass {
     }
 
     //retorna un dispositiu
-    public Dispositiu getDispositiu(String nom){ //int id_dispositiu){
+    public Dispositiu getDispositiu(int id_dispositiu){
         Dispositiu aux;
 
-        String whereClause = "nom = ? ";
-        String[] whereArgs = {nom};
+        String whereClause = "id_dispositiu = ? ";
+        String[] whereArgs = {String.valueOf(id_dispositiu)};
         Cursor cursor = db.query(DataBaseHelper.TABLE_DISPOSITIU, null, whereClause, whereArgs, null, null, null);
         cursor.moveToFirst();
         if (cursor.getCount() == 0) {
@@ -244,7 +255,7 @@ public class CRUDClass {
         cv.put("vehicle", dis.getVehicle());
         cv.put("latitud", dis.getLat());
         cv.put("longitud", dis.getLong());
-        cv.put("id_dispositiu_empresa", dis.getId_empresa());
+        //cv.put("id_dispositiu_empresa", dis.getId_empresa());
         try {
             db.update(DBH.TABLE_DISPOSITIU, cv, whereClause, whereArgs );
             return true;
@@ -295,28 +306,33 @@ public class CRUDClass {
      */
     public Dispositiu cursorToDis(Cursor cursor){
         Dispositiu dis = new Dispositiu();
-        //dis.setId(cursor.getString(0));
+
+        dis.setId(cursor.getInt(0));
         dis.setNom(cursor.getString(1));
-        dis.setFlota(cursor.getInt(2));
+        dis.setFlota(cursor.getString(2));
         dis.setVehicle(cursor.getString(5));
-        dis.setPosition(cursor.getDouble(3),cursor.getDouble(4));
+        dis.setPosition(cursor.getDouble(3), cursor.getDouble(4));
 
         return dis;
     }
     private Usuari cursorToUsuari(Cursor cursor) {
         Usuari us = new Usuari();
-        //us.setId(cursor.getString(0));
+
+        us.setId(cursor.getInt(0));
         us.setNom(cursor.getString(1));
         us.setEmail(cursor.getString(2));
         us.setRol(cursor.getInt(3));
         us.setPwd(cursor.getString(4));
         us.setIdEmpresa(cursor.getInt(5));
+
         return us;
     }
 
-    private Empresa cursorToEmpresa(Cursor cursor) {
+    private Empresa cursorToEmp(Cursor cursor) {
         Empresa emp = new Empresa();
 
+        emp.setId(cursor.getInt(0));
+        emp.setNom(cursor.getString(1));
 
         return emp;
     }

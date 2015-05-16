@@ -24,23 +24,27 @@ public class Usuari {
         return email;
     }
 
-    public void setId (int id){
-        this.id = id
+    public void setId(int id) {
+        this.id = id;
+    }
 
-        ;    }
-    public void setNom(String nom){
+    public void setNom(String nom) {
         this.nom = nom;
     }
-    public void setRol(int rol){
+
+    public void setRol(int rol) {
         this.rol = rol;
     }
-    public void setPwd (String pwd){
+
+    public void setPwd(String pwd) {
         this.pwd = pwd;
     }
-    public void setIdEmpresa(int id_empresa){
+
+    public void setIdEmpresa(int id_empresa) {
         this.id_empresa = id_empresa;
     }
-    public void setEmail(String email){
+
+    public void setEmail(String email) {
         this.email = email;
     }
 

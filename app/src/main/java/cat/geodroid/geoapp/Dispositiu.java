@@ -3,12 +3,12 @@ package cat.geodroid.geoapp;
 import com.google.android.gms.maps.model.LatLng;
 
 /**
- * Created by Victor LLucià, Ricard Moya on 31/3/15.
+ * Created by Victor LLuciÃ , Ricard Moya on 31/3/15.
  */
 public class Dispositiu {
     //TODO generate atributes, getters and setters
     private int id_dispositiu;
-    private int id_flota;
+    private String flota;
     private Double longitud;
     private Double latitud;
     private String vehicle;
@@ -17,61 +17,82 @@ public class Dispositiu {
     private int id_usuari;
     private String nom;
 
-    public Dispositiu(){
+    public Dispositiu() {
 
     }
 
-    public Dispositiu (String nom, int flota, String vehicle, String empresa) {
+    public Dispositiu (String nom, String flota, String vehicle, int empresa) {
         this.nom = nom;
-        this.id_flota = flota;
+        this.flota = flota;
         this.vehicle = vehicle;
+        this.id_empresa = empresa;
     }
 
-    public void setFlota(int flota){
-        this.id_flota = flota;
+    public void setFlota(String flota) {
+        this.flota = flota;
     }
-    public void setNom(String nom){
+
+    public void setNom(String nom) {
         this.nom = nom;
     }
-    public void setPosition(Double longitud, Double latitud){
+
+    public void setPosition(Double longitud, Double latitud) {
         this.longitud = longitud;
         this.latitud = latitud;
     }
-    public void setVehicle(String vehicle){
+
+    public void setVehicle(String vehicle) {
         this.vehicle=vehicle;
     }
 
-    public void setId(int id){ this.id_dispositiu = id; }
-    public void setCarrega(String Carrega){
+    public void setId(int id) {
+        this.id_dispositiu = id;
+    }
+
+    public void setCarrega(String Carrega) {
         this.carrega = carrega;
     }
-    public void setEmpresa(int empresa){
+
+    public void setEmpresa(int empresa) {
         this.id_empresa = empresa;
     }
-    public void setUsuari(int usuari){
+
+    public void setUsuari(int usuari) {
         this.id_usuari = usuari;
     }
 
-    public int getId(){ return id_dispositiu; }
-    public int getFlota(){ return id_flota; }
-    public Double getLong(){
+    public int getId() {
+        return id_dispositiu;
+    }
+
+    public String getFlota() {
+        return flota;
+    }
+
+    public Double getLong() {
         return longitud;
     }
-    public Double getLat(){
+
+    public Double getLat() {
         return latitud;
     }
-    public String getVehicle(){
+
+    public String getVehicle() {
         return vehicle;
     }
-    public String getCarrega(){
+
+    public String getCarrega() {
         return carrega;
     }
-    public int getId_empresa(){
+
+    public int getId_empresa() {
         return id_empresa;
     }
-    public int getId_usuari(){
+
+    public int getId_usuari() {
         return id_usuari;
     }
+
     public LatLng getPosition() {
         LatLng latlong = new LatLng(latitud, longitud);
         return latlong;

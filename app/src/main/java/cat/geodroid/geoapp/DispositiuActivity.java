@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import cat.geodroid.geoapp.R;
 
@@ -24,30 +25,42 @@ public class DispositiuActivity extends ActionBarActivity {
         setContentView(R.layout.activity_dispositiu);
 
         crud = new CRUDClass(context);
+        context = this;
         dades = getIntent().getExtras();
 
-        //int idDispositiu = dades.getInt("idDispositiu");
-        String nom_disp = dades.getString("nom");
-        final Dispositiu dis = crud.getDispositiu(nom_disp);
-        Log.d("" + nom_disp, "Ricard");
+        int idDispositiu = dades.getInt("idDispositiu");
+        final Dispositiu dis = crud.getDispositiu(idDispositiu);
 
         final EditText nom = (EditText) findViewById(R.id.nom_dispositiu);
-        final EditText empresa = (EditText) findViewById(R.id.empresa);
+        final EditText flota = (EditText) findViewById(R.id.flota);
 
         Button actualitzar = (Button) findViewById(R.id.actualitza);
 
         nom.setText(dis.getNom());
-        empresa.setText(String.valueOf(dis.getId_empresa()));
+        flota.setText(dis.getFlota());
 
         actualitzar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Dispositiu aux = dis;
-                aux.setNom(nom.getText().toString());
-                aux.setEmpresa(Integer.valueOf(empresa.getText().toString()));
-                crud.updateDispositiu(aux);
+                dis.setNom(nom.getText().toString());
+                dis.setFlota(flota.getText().toString());
+
+                boolean success = crud.updateDispositiu(dis);
+                if(success){
+                    Toast.makeText(context, "Actualitzat correctament", Toast.LENGTH_SHORT).show();
+                }else{
+                    Toast.makeText(context, "Actualitzat erroneament", Toast.LENGTH_SHORT).show();
+                }
             }
         });
+
+        //Carreguem vista des dels Markers de GMAPS. Anulem la possible edicio dels dispositius
+        /*if(dades.getString("ubicacio")=="mapa") {
+            //
+            nom.setEnabled(false);
+            empresa.setEnabled(false);
+            actualitzar.setVisibility(View.INVISIBLE);
+        }*/
     }
 
     @Override

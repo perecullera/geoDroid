@@ -6,17 +6,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 import java.util.List;
-
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.TextView;
 
 import cat.geodroid.geoapp.R;
 
@@ -52,22 +51,20 @@ public class LlistaFlotaActivity extends ActionBarActivity {
                 TextView nom_dispositiu = (TextView) view.findViewById(R.id.nom_dispositiu);
 
                 Intent intent = new Intent(LlistaFlotaActivity.this, DispositiuActivity.class);
-                intent.putExtra("idDispositiu", id_dispositiu.getText());
-                intent.putExtra("nom", nom_dispositiu.getText());
+                intent.putExtra("idDispositiu", Integer.parseInt(id_dispositiu.getText().toString()));
+                intent.putExtra("nom", nom_dispositiu.getText().toString());
                 startActivity(intent);
             }
         });
         llista_dispositius.setClickable(true);
 
-        /*info = (TextView) findViewById(R.id.info_list);
-
-        info.setText("Aqui cal llistar les flotes que hi haura al resultat de la consulta 'SELECT * FROM flotes WHERE propietari=" + dades.getString("empresa"));*/
+        //info = (TextView) findViewById(R.id.info_list);
+        //info.setText("Aqui cal llistar les flotes que hi haura al resultat de la consulta 'SELECT * FROM flotes WHERE propietari=" + dades.getString("empresa"));
     }
 
     private class DispositiusAdapter extends BaseAdapter {
         List<Dispositiu> llistat;
         Context context;
-        //LayoutInflater inflater;
 
         public DispositiusAdapter(Context context, List<Dispositiu> llistat){
             this.llistat = llistat;
@@ -101,8 +98,7 @@ public class LlistaFlotaActivity extends ActionBarActivity {
 
             Dispositiu dispositiu = llistat.get(position);
 
-            Log.d(""+dispositiu.getId(), "Ricard");
-            id_dispositiu.setText(""+dispositiu.getId());
+            id_dispositiu.setText(String.valueOf(dispositiu.getId()));
             nom_dispositiu.setText(dispositiu.getNom().toString());
 
             return dispositiusView;

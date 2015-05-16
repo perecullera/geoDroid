@@ -18,7 +18,7 @@ class DataBaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "geoDroid";
 
     // Table Names
-    private static final String TABLE_EMPRESA = "empresa";
+    protected static final String TABLE_EMPRESA = "empresa";
     protected static final String TABLE_USUARI = "usuari";
     private static final String TABLE_DETALLS = "detalls";
     public static final String TABLE_DISPOSITIU = "dispositiu";
@@ -27,7 +27,7 @@ class DataBaseHelper extends SQLiteOpenHelper {
     // Empresa table create statement
     private static final String CREATE_TABLE_EMPRESA =
             "CREATE TABLE "+ TABLE_EMPRESA +" (" +
-                    "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    "id_empresa INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "nom VARCHAR (50) NOT NULL)";
 
     //Usuari table create statement
@@ -73,7 +73,7 @@ class DataBaseHelper extends SQLiteOpenHelper {
                     + "('dispositiu3', 'flota2', 2.204363, 41.400529, 'vehicle3', '', 1, 2), "
                     + "('dispositiu4', 'flota2', 2.140033, 41.367781, 'vehicle4', '', 1, 2), "
                     + "('dispositiu5', 'flota1', 2.150033, 41.357781, 'vehicle5', '', 1, 2), "
-                    + "('dispositiu6', 'flota1', 2.125913, 41.376800, 'vehicle6', '', 2, 1); "
+                    + "('dispositiu6', 'flota1', 2.125913, 41.376800, 'vehicle6', '', 2, 1);"
             ;
 
     private static final String DB_PREPOPULATE_EMPRESA =
