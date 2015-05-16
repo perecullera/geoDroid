@@ -2,7 +2,6 @@ package cat.geodroid.geoapp;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,10 +15,6 @@ import java.util.List;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-
-import cat.geodroid.geoapp.R;
-
-import org.w3c.dom.Text;
 
 public class LlistaFlotaActivity extends ActionBarActivity {
     TextView info;
@@ -38,12 +33,20 @@ public class LlistaFlotaActivity extends ActionBarActivity {
         dades = getIntent().getExtras();
         crud = new CRUDClass(context);
 
+        /**
+         *
+         */
         List<Dispositiu> dispositius = crud.getDispositiusEmpresa(dades.getInt("empresa"));
 
         dispositiusAdapter = new DispositiusAdapter(LlistaFlotaActivity.this, dispositius);
         llista_dispositius = (ListView) findViewById(R.id.dispositius_listView);
         llista_dispositius.setAdapter(dispositiusAdapter);
 
+        /**
+         * Gestionem el click per a cada element de la llista.
+         * Quan es faci click a un element carregarem la Activity Dispositiu
+         * amb un Bundle de dades necessaries.
+         */
         llista_dispositius.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -57,11 +60,11 @@ public class LlistaFlotaActivity extends ActionBarActivity {
             }
         });
         llista_dispositius.setClickable(true);
-
-        //info = (TextView) findViewById(R.id.info_list);
-        //info.setText("Aqui cal llistar les flotes que hi haura al resultat de la consulta 'SELECT * FROM flotes WHERE propietari=" + dades.getString("empresa"));
     }
 
+    /**
+     * Inner Class per a gestionar el llistat de dispositius a mostrar
+     */
     private class DispositiusAdapter extends BaseAdapter {
         List<Dispositiu> llistat;
         Context context;
@@ -86,22 +89,29 @@ public class LlistaFlotaActivity extends ActionBarActivity {
             return 0;
         }
 
+        /**
+         * Metode encarregat d'inflar la vista individual del tipus
+         * DispositiuList per a carregar la ListView amb els elements
+         * @param position
+         * @param convertView
+         * @param parent
+         * @return
+         */
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View dispositiusView = convertView;
-            dispositiusView = inflater.inflate(R.layout.dispositius_listview, parent, false);
 
-            TextView id_dispositiu = (TextView) dispositiusView.findViewById(R.id.id_dispositiu);
-            TextView nom_dispositiu = (TextView) dispositiusView.findViewById(R.id.nom_dispositiu);
+            convertView = inflater.inflate(R.layout.dispositius_listview, parent, false);
+
+            TextView id_dispositiu = (TextView) convertView.findViewById(R.id.id_dispositiu);
+            TextView nom_dispositiu = (TextView) convertView.findViewById(R.id.nom_dispositiu);
 
             Dispositiu dispositiu = llistat.get(position);
 
             id_dispositiu.setText(String.valueOf(dispositiu.getId()));
             nom_dispositiu.setText(dispositiu.getNom().toString());
 
-            return dispositiusView;
+            return convertView;
         }
     }
 

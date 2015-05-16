@@ -42,41 +42,41 @@ public class LoginActivity extends ActionBarActivity {
         contrasenya = (EditText) findViewById(R.id.contrasenya_text);
         context = getApplicationContext();
 
+        /**
+         * Comprovem que les credencials existeixen a la BBDD.
+         * En cas satisfactori, carreguem Menu Activity
+         */
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!email.getText().toString().matches("")||!contrasenya.getText().toString().matches("")) {
-                    String text = email.getText().toString() + " i " + contrasenya.getText().toString() + " a comprovar a la BBDD";
+            if(!email.getText().toString().matches("")||!contrasenya.getText().toString().matches("")) {
+                int existeixUsuari = 0;
+                Usuari u = crud.loguejaUsuari(email.getText().toString(), contrasenya.getText().toString());
 
-                    //Crear la funciÃ³ a CRUDClass
-                    int existeixUsuari = 0; //
+                existeixUsuari = u.id;
 
-                    //debuging();
+                if(existeixUsuari>=0) {
+                    Intent intent = new Intent(LoginActivity.this, MenuActivity.class);
+                    intent.putExtra("email", email.getText().toString());
+                    intent.putExtra("contrasenya", email.getText().toString());
+                    intent.putExtra("tipusUsuari", u.getRol());
+                    intent.putExtra("idUsuari", u.getId());
+                    intent.putExtra("empresa", u.getId_empresa());
 
-                    //System.out.println("email= "+email.getText().toString()+" contrasenya = "+contrasenya.getText().toString());
-                    Usuari u = crud.loguejaUsuari(email.getText().toString(), contrasenya.getText().toString());
-
-                    Toast.makeText(context, u.getId()+" - ROL: "+u.getRol(), Toast.LENGTH_SHORT).show();
-                    existeixUsuari = u.id;
-
-                    if(existeixUsuari>=0) {
-                        Intent intent = new Intent(LoginActivity.this, MenuActivity.class);
-                        intent.putExtra("email", email.getText().toString());
-                        intent.putExtra("contrasenya", email.getText().toString());
-                        intent.putExtra("tipusUsuari", u.getRol());
-                        intent.putExtra("idUsuari", u.getId());
-                        intent.putExtra("empresa", u.getId_empresa());
-
-                        startActivity(intent);
-                    }else{
-                        Toast.makeText(context, "Email i contrasenya no coincideixen", Toast.LENGTH_LONG).show();
-                    }
+                    startActivity(intent);
                 }else{
-                    Toast.makeText(context, "Cal omplir els dos camps per a fer login", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, "Email i contrasenya no coincideixen", Toast.LENGTH_LONG).show();
                 }
+            }else{
+                Toast.makeText(context, "Cal omplir els dos camps per a fer login", Toast.LENGTH_LONG).show();
+            }
             }
         });
 
+        /**
+         * Botó que carregarà un formulari per
+         * a recordar el password a l'usuari
+         */
         rememberButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
@@ -107,44 +107,4 @@ public class LoginActivity extends ActionBarActivity {
 
         return super.onOptionsItemSelected(item);
     }
-
-/*
-    public void debuging(){
-        Usuari u = new Usuari();
-        //u.setId("12");
-        u.setNom("emilio");
-        u.setEmail("email@email.com");
-        u.setRol(1);
-        u.setPwd("password");
-        u.setIdEmpresa(1);
-        crud.createUsuari(u);
-    }
-*/
-
-/*
-        List<Dispositiu> llista = new ArrayList<Dispositiu>();
-        Dispositiu dis1 = new Dispositiu("dispositiu1", 1, "vehicle1", "2");
-        Dispositiu dis2 = new Dispositiu("dispositiu2", 2, "vehicle2", "2");
-        Dispositiu dis3 = new Dispositiu("dispositiu3", 2, "vehicle3", "1");
-        Dispositiu dis4 = new Dispositiu("dispositiu4", 2, "vehicle4", "2");
-        Dispositiu dis5 = new Dispositiu("dispositiu5", 1, "vehicle5", "1");
-        Dispositiu dis6 = new Dispositiu("dispositiu6", 1, "vehicle6", "2");
-        dis1.setPosition(2.135913,41.376800);
-        dis2.setPosition(2.164091,41.407504);
-        dis3.setPosition(2.204363,41.400529);
-        dis4.setPosition(2.080033, 41.367781);
-        dis5.setPosition(2.080033, 41.357781);
-        dis6.setPosition(2.080033, 41.347781);
-        llista.add(dis1);
-        llista.add(dis2);
-        llista.add(dis3);
-        llista.add(dis4);
-        llista.add(dis5);
-        llista.add(dis6);
-        for(int i = 0; i<llista.size();i++){
-            crud.createDispositiu(llista.get(i));
-        }
-    }
-*/
-
 }

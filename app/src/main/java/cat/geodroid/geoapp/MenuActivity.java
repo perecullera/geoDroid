@@ -15,7 +15,6 @@ public class MenuActivity extends ActionBarActivity {
     TextView menu_title;
     Bundle dades;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,29 +33,40 @@ public class MenuActivity extends ActionBarActivity {
 
         menu_title.setText("Hola, "+dades.getString("email"));
 
+        /**
+         * Carreguem Activity Maps per a visualitzar
+         * l'ubicació dels dispositius
+         */
         mapaButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MenuActivity.this, MapsActivity.class);
-                Toast.makeText(getApplicationContext(), "Falta GooglePlayServices a Genymotion", Toast.LENGTH_SHORT).show();
-                startActivity(intent);
+            Intent intent = new Intent(MenuActivity.this, MapsActivity.class);
+            Toast.makeText(getApplicationContext(), "Falta GooglePlayServices a Genymotion", Toast.LENGTH_SHORT).show();
+            startActivity(intent);
             }
         });
 
+        /**
+         * Carreguem Activity LlistaFlota i passem les dades de
+         *  l'usuari per a fer la cerca dels seus dispositius
+         */
         editaButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MenuActivity.this, LlistaFlotaActivity.class);
-                intent.putExtra("empresa", dades.getInt("empresa"));
-                startActivity(intent);
+            Intent intent = new Intent(MenuActivity.this, LlistaFlotaActivity.class);
+            intent.putExtra("empresa", dades.getInt("empresa"));
+            startActivity(intent);
             }
         });
 
+        /**
+         * Carreguem Activity Login al fer click al Botó logout
+         */
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MenuActivity.this, LoginActivity.class);
-                startActivity(intent);
+            Intent intent = new Intent(MenuActivity.this, LoginActivity.class);
+            startActivity(intent);
             }
         });
     }
