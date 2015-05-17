@@ -65,7 +65,7 @@ public class LoginActivity extends ActionBarActivity {
                  * Si ha trobat l'usuari, carreguem dades a un Bundle,
                  * fem un intent i l'executem
                  */
-                if ((u !=null) && (u.id) >= 0) {
+                if ((u !=null) && (existeixUsuari = u.id) >= 0) {
 
                     Intent intent = new Intent(LoginActivity.this, MenuActivity.class);
                     intent.putExtra("email", email.getText().toString());
