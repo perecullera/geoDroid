@@ -61,13 +61,12 @@ public class LoginActivity extends ActionBarActivity {
                  */
                 Usuari u = crud.loguejaUsuari(email.getText().toString(), contrasenya.getText().toString());
 
-                existeixUsuari = u.id;
-
                 /**
                  * Si ha trobat l'usuari, carreguem dades a un Bundle,
                  * fem un intent i l'executem
                  */
-                if(existeixUsuari>=0) {
+                if ((u !=null) && (u.id) >= 0) {
+
                     Intent intent = new Intent(LoginActivity.this, MenuActivity.class);
                     intent.putExtra("email", email.getText().toString());
                     intent.putExtra("contrasenya", email.getText().toString());

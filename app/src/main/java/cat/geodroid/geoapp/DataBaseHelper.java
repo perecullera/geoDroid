@@ -85,12 +85,12 @@ class DataBaseHelper extends SQLiteOpenHelper {
             "insert into "+ TABLE_DISPOSITIU
                     + " (nom, flota, latitud, longitud, vehicle, carrega, id_dispositiu_empresa, id_dispositiu_usuari) "
                     + "values "
-                    + "('dispositiu1', 'flota1', 2.135913, 41.376800, 'vehicle1', '', 1, 2), "
-                    + "('dispositiu2', 'flota2', 2.164091, 41.407504, 'vehicle2', '', 1, 2), "
-                    + "('dispositiu3', 'flota2', 2.204363, 41.400529, 'vehicle3', '', 1, 2), "
-                    + "('dispositiu4', 'flota2', 2.140033, 41.367781, 'vehicle4', '', 1, 2), "
-                    + "('dispositiu5', 'flota1', 2.150033, 41.357781, 'vehicle5', '', 1, 2), "
-                    + "('dispositiu6', 'flota1', 2.125913, 41.376800, 'vehicle6', '', 2, 1);"
+                    + "('dispositiu1', 'flota1', 41.376800, 2.135913, 'vehicle1', '', 1, 2), "
+                    + "('dispositiu2', 'flota2', 41.407504, 2.164091, 'vehicle2', '', 1, 2), "
+                    + "('dispositiu3', 'flota2', 41.400529, 2.204363, 'vehicle3', '', 1, 2), "
+                    + "('dispositiu4', 'flota2', 41.367781, 2.140033, 'vehicle4', '', 1, 2), "
+                    + "('dispositiu5', 'flota1', 41.357781, 2.150033, 'vehicle5', '', 1, 2), "
+                    + "('dispositiu6', 'flota1', 41.376800, 2.125913, 'vehicle6', '', 2, 1);"
             ;
 
     /**

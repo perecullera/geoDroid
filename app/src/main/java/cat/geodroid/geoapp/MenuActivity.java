@@ -39,13 +39,14 @@ public class MenuActivity extends ActionBarActivity {
 
         /**
          * Carreguem Activity Maps per a visualitzar
-         * l'ubicació dels dispositius
+         * l'ubicaciÃ³ dels dispositius
          */
         mapaButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
             Intent intent = new Intent(MenuActivity.this, MapsActivity.class);
-            Toast.makeText(getApplicationContext(), "Falta GooglePlayServices a Genymotion", Toast.LENGTH_SHORT).show();
+            intent.putExtra("empresa", dades.getInt("empresa"));
+            //Toast.makeText(getApplicationContext(), "Falta GooglePlayServices a Genymotion", Toast.LENGTH_SHORT).show();
             startActivity(intent);
             }
         });
@@ -64,7 +65,7 @@ public class MenuActivity extends ActionBarActivity {
         });
 
         /**
-         * Carreguem Activity Login al fer click al Botó logout
+         * Carreguem Activity Login al fer click al BotÃ³ logout
          */
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,6 +75,7 @@ public class MenuActivity extends ActionBarActivity {
             }
         });
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

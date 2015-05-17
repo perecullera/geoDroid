@@ -40,6 +40,7 @@ public class MapsActivity extends FragmentActivity {
     private GoogleMap mGMap; // Might be null if Google Play services APK is not available.
 
     private Context context ;
+    private Bundle dades;
     private CRUDClass data;
     private MarkerOptions markerOptions;
 
@@ -51,7 +52,7 @@ public class MapsActivity extends FragmentActivity {
         setContentView(R.layout.activity_maps);
         context = this;
 
-
+        dades = getIntent().getExtras();
 
         // Comprovem si els Google Play Services estan disponibles.
         int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getBaseContext());
@@ -174,13 +175,14 @@ public class MapsActivity extends FragmentActivity {
                 data.open();
 
             } catch (Exception e) {
-                Log.i("hello", "hello");
+                Log.i("ERROR", "Marcador no carregat");
             }
 
             //DEBUG per inserció de valors a la BDD
             debugging();
             // Carreguem en una llista els marcadors obtinguts de la BD
-            List<Dispositiu> m = data.getDispositius();
+            //List<Dispositiu> m = data.getDispositius();
+            List<Dispositiu> m = data.getDispositiusEmpresa(dades.getInt("empresa"));
 
             // Si obtenim marcadors
             if (!m.isEmpty()) {
