@@ -117,8 +117,8 @@ class DataBaseHelper extends SQLiteOpenHelper {
                     + "values "
                     + "('admin', 'email@email.com', 1, 'password', 1), "
                     + "('laia', 'e@ema.com', 1, 'p', 2), "
-                    + "('u', 'mail@mail.cat', 1, 'p', 1);"
-                    + "('conductor', 'simple@mail.cat',2,'p',2)";
+                    + "('u', 'mail@mail.cat', 1, 'p', 1),"
+                    + "('conductor', 'simple@mail.cat', 0, 'p', 2);";
             ;
 
     public DataBaseHelper(Context context)  {
