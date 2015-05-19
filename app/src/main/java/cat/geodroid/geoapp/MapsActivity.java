@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
@@ -17,9 +18,16 @@ import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Marker;
+
+import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
+import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+
+import android.content.Intent;
 
 /**
  * Created by Victor Llucià i Ricard Moya
@@ -35,7 +43,7 @@ import java.util.List;
  *
  * Els marcadors s'obtenen d'una BD SQLite fent servir una classe interna de tasca asíncrona.
  */
-public class MapsActivity extends FragmentActivity {
+public class MapsActivity extends FragmentActivity implements OnInfoWindowClickListener {
 
     private GoogleMap mGMap; // Might be null if Google Play services APK is not available.
 
@@ -43,6 +51,8 @@ public class MapsActivity extends FragmentActivity {
     private Bundle dades;
     private CRUDClass data;
     private MarkerOptions markerOptions;
+
+    private HashMap<Marker, Dispositiu> eventMarkerMap = new HashMap<Marker, Dispositiu>();
 
     LatLngBounds bounds; //per calcular la mitjana dels markers
 
@@ -80,8 +90,8 @@ public class MapsActivity extends FragmentActivity {
                 }
             });
 
+            mGMap.setOnInfoWindowClickListener(this);
         }
-
     }
 
     @Override
@@ -152,7 +162,7 @@ public class MapsActivity extends FragmentActivity {
      *                 passa al mètode onProgressUpdate() que interactua amb la UI.
      * param Result, Void, el procés en 2n pla retorna null.
      */
-    private class SetMarkersTask extends AsyncTask<Void, MarkerOptions, Void> {
+    private class SetMarkersTask extends AsyncTask<Void, Object, Void> {
 
         protected void onPreExecute() {
             // Turn progress spinner on
@@ -187,29 +197,31 @@ public class MapsActivity extends FragmentActivity {
             // Si obtenim marcadors
             if (!m.isEmpty()) {
 
+                //Per calcular la mitjana dels punts en el mapa
+                LatLngBounds.Builder builder = new LatLngBounds.Builder();
+
                 // Obtenim les característiques de cada marcador i les
                 // passem a l'API de GMaps
                 for (int i = 0; i < m.size(); i++) {
-                    double lat = m.get(i).getLat();
-                    double lng = m.get(i).getLong();
+
+                    Dispositiu d = m.get(i);
+                    builder.include(d.getPosition());
+
+                    double lat = d.getLat();
+                    double lng = d.getLong();
                     LatLng latlong = new LatLng(lat, lng);
-                    String snippet = m.get(i).getVehicle()+" \n "+ m.get(i).getFlota();
+                    String snippet = d.getVehicle()+" \n "+ d.getFlota();
                     markerOptions = new MarkerOptions()
-                            .title(m.get(i).getNom())
+                            .title(d.getNom())
                             .position(latlong)
                             .snippet(snippet);
+
                     // Enviem a onProgressUpdate les característiques
                     // del marcador
-                    publishProgress(markerOptions);
+                    publishProgress(markerOptions, d);
 
-                }
-                //calcula mitjana dels punts en el mapa
-                LatLngBounds.Builder builder = new LatLngBounds.Builder();
-                for (Dispositiu dis : m) {
-                    builder.include(dis.getPosition());
                 }
                 bounds = builder.build();
-
             }
             return null;
         }
@@ -218,9 +230,30 @@ public class MapsActivity extends FragmentActivity {
          *
          * @param params MarkerOptions, tipus de la unitat de progrés
          */
-        protected void onProgressUpdate(MarkerOptions... params) {
+        protected void onProgressUpdate(Object... params) {
+
             // Add newly-created marker to map
-            mGMap.addMarker(params[0]);
+            Marker m = mGMap.addMarker((MarkerOptions) params[0]);
+
+            eventMarkerMap.put(m, (Dispositiu) params[1]);
+
+            /*
+            mGMap.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
+                    @Override
+                    public void onInfoWindowClick(Marker marker) {
+
+                        Toast.makeText(context, String.valueOf(eventMarkerMap.get(params[0]).getId()), Toast.LENGTH_SHORT).show();
+
+
+                        Intent intent = new Intent(MapsActivity.this, DispositiuActivity.class);
+                        intent.putExtra("ubicacio", "mapa");
+                        intent.putExtra("idDispositiu", eventMarkerMap.get(params[0]).getId());
+                        startActivity(intent);
+
+                    }
+            });
+            */
+
         }
 
         protected void onPostExecute(Void result) {
@@ -230,6 +263,17 @@ public class MapsActivity extends FragmentActivity {
         }
 
     }
+
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+
+        //Toast.makeText(context, String.valueOf(eventMarkerMap.get(marker).getId()), Toast.LENGTH_SHORT).show();
+
+        Intent intent = new Intent(MapsActivity.this, DispositiuActivity.class);
+        intent.putExtra("ubicacio", "mapa");
+        intent.putExtra("idDispositiu", String.valueOf(eventMarkerMap.get(marker).getId()));
+        startActivity(intent);
+     }
 
     /**
      * Mètode per a insertar dispositius posicionats per a debugging

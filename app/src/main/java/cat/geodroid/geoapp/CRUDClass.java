@@ -26,6 +26,14 @@ public class CRUDClass {
         db = DBH.getWritableDatabase();
     }
 
+    public void close() throws SQLException{
+        DBH.close();
+    }
+
+    public boolean isOpen() throws SQLException{
+        return db.isOpen();
+    }
+
     //--------CREATE---------
 
     /**

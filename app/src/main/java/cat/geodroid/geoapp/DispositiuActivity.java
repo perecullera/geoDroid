@@ -67,12 +67,12 @@ public class DispositiuActivity extends ActionBarActivity {
          * Carreguem vista des dels Markers de GMAPS. Anulem la possible edicio dels dispositius
          */
 
-        /*if(dades.getString("ubicacio")=="mapa") {
+        if(dades.getString("ubicacio") == "mapa") {
             //
             nom.setEnabled(false);
-            empresa.setEnabled(false);
+            flota.setEnabled(false);
             actualitzar.setVisibility(View.INVISIBLE);
-        }*/
+        }
     }
 
     @Override
