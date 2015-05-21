@@ -52,7 +52,7 @@ public class MapsActivity extends FragmentActivity implements OnInfoWindowClickL
     private CRUDClass data;
     private MarkerOptions markerOptions;
 
-    private HashMap<Marker, Dispositiu> eventMarkerMap = new HashMap<Marker, Dispositiu>();
+    private HashMap<Marker, Dispositiu> dispositiuMarkerMap = new HashMap<Marker, Dispositiu>();
 
     LatLngBounds bounds; //per calcular la mitjana dels markers
 
@@ -217,7 +217,7 @@ public class MapsActivity extends FragmentActivity implements OnInfoWindowClickL
                             .snippet(snippet);
 
                     // Enviem a onProgressUpdate les característiques
-                    // del marcador
+                    // del marcador i el dispositiu que té les dades a associar-hi
                     publishProgress(markerOptions, d);
 
                 }
@@ -228,40 +228,31 @@ public class MapsActivity extends FragmentActivity implements OnInfoWindowClickL
         /**
          * Mètode que corre al fil de la UI
          *
-         * @param params MarkerOptions, tipus de la unitat de progrés
+         * @param params MarkerOptions i Dispositiu, tipus de la unitat de progrés
          */
         protected void onProgressUpdate(Object... params) {
 
+            if (!(params[0] instanceof MarkerOptions)) {
+                throw new IllegalArgumentException("Wrong type for argument 1! " +
+                        "MarkerOptions expected, instead got "+params[0].getClass().getCanonicalName());
+            }
+
+            if (!(params[1] instanceof Dispositiu)) {
+                throw new IllegalArgumentException("Wrong type for argument 2! " +
+                        "Dispositiu expected, instead got "+params[1].getClass().getCanonicalName());
+            }
+
+            Marker m;
             // Add newly-created marker to map
-            Marker m = mGMap.addMarker((MarkerOptions) params[0]);
-
-            eventMarkerMap.put(m, (Dispositiu) params[1]);
-
-            /*
-            mGMap.setOnInfoWindowClickListener(new OnInfoWindowClickListener() {
-                    @Override
-                    public void onInfoWindowClick(Marker marker) {
-
-                        Toast.makeText(context, String.valueOf(eventMarkerMap.get(params[0]).getId()), Toast.LENGTH_SHORT).show();
-
-
-                        Intent intent = new Intent(MapsActivity.this, DispositiuActivity.class);
-                        intent.putExtra("ubicacio", "mapa");
-                        intent.putExtra("idDispositiu", eventMarkerMap.get(params[0]).getId());
-                        startActivity(intent);
-
-                    }
-            });
-            */
+            m = mGMap.addMarker((MarkerOptions) params[0]);
+            dispositiuMarkerMap.put(m, (Dispositiu) params[1]);
 
         }
 
         protected void onPostExecute(Void result) {
             // Turn off progress spinner
             setProgressBarIndeterminateVisibility(false);
-
         }
-
     }
 
     @Override
@@ -271,7 +262,7 @@ public class MapsActivity extends FragmentActivity implements OnInfoWindowClickL
 
         Intent intent = new Intent(MapsActivity.this, DispositiuActivity.class);
         intent.putExtra("ubicacio", "mapa");
-        intent.putExtra("idDispositiu", String.valueOf(eventMarkerMap.get(marker).getId()));
+        intent.putExtra("idDispositiu", dispositiuMarkerMap.get(marker).getId());
         startActivity(intent);
      }
 

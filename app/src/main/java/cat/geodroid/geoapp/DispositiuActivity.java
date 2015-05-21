@@ -28,6 +28,27 @@ public class DispositiuActivity extends ActionBarActivity {
         context = this;
         dades = getIntent().getExtras();
 
+        final EditText nom = (EditText) findViewById(R.id.nom_dispositiu);
+        final EditText flota = (EditText) findViewById(R.id.flota);
+        final Button actualitzar = (Button) findViewById(R.id.actualitza);
+
+        /**
+         * Carreguem vista des dels Markers de GMAPS. Anulem la possible edicio dels dispositius
+         */
+        if (dades.getString("ubicacio").equals("mapa")) {
+            //
+            nom.setKeyListener(null);
+            //nom.setEnabled(false);
+            //nom.setFocusable(false);
+            //nom.setClickable(false);
+
+            flota.setKeyListener(null);
+            //flota.setEnabled(false);
+            //flota.setFocusable(false);
+            //flota.setClickable(false);
+            actualitzar.setVisibility(View.INVISIBLE);
+        }
+
         /**
          * Cerquem el dispositiu a la BBDD amb les
          * dades passades al Bundle
@@ -35,16 +56,11 @@ public class DispositiuActivity extends ActionBarActivity {
         int idDispositiu = dades.getInt("idDispositiu");
         final Dispositiu dis = crud.getDispositiu(idDispositiu);
 
-        final EditText nom = (EditText) findViewById(R.id.nom_dispositiu);
-        final EditText flota = (EditText) findViewById(R.id.flota);
-
-        Button actualitzar = (Button) findViewById(R.id.actualitza);
-
         nom.setText(dis.getNom());
         flota.setText(dis.getFlota());
 
         /**
-         * Boto que gestion l'actualitzacio del dispositiu
+         * Boto que gestiona l'actualitzacio del dispositiu
          */
         actualitzar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,26 +69,13 @@ public class DispositiuActivity extends ActionBarActivity {
             dis.setFlota(flota.getText().toString());
 
             boolean success = crud.updateDispositiu(dis);
-            if(success){
+            if (success){
                 Toast.makeText(context, "Actualitzat correctament, prem enrere per tornar a la llista", Toast.LENGTH_SHORT).show();
-            }else{
+            } else {
                 Toast.makeText(context, "Actualitzat erroneament", Toast.LENGTH_SHORT).show();
             }
             }
         });
-
-
-        /**
-         * EN UN FUTUR
-         * Carreguem vista des dels Markers de GMAPS. Anulem la possible edicio dels dispositius
-         */
-
-        if(dades.getString("ubicacio") == "mapa") {
-            //
-            nom.setEnabled(false);
-            flota.setEnabled(false);
-            actualitzar.setVisibility(View.INVISIBLE);
-        }
     }
 
     @Override

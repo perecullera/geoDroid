@@ -2,10 +2,12 @@ package cat.geodroid.geoapp;
 
 import com.google.android.gms.maps.model.LatLng;
 
+import java.io.Serializable;
+
 /**
  * Created by Victor LLuciÃ , Ricard Moya on 31/3/15.
  */
-public class Dispositiu {
+public class Dispositiu implements Serializable {
     //TODO generate atributes, getters and setters
     private int id_dispositiu;
     private String flota;
@@ -48,6 +50,7 @@ public class Dispositiu {
      * Setter nom Dispositiu
      * @param nom
      */
+    @SuppressWarnings("serial") //with this annotation we are going to hide compiler warning
     public void setNom(String nom) {
         this.nom = nom;
     }
@@ -67,7 +70,7 @@ public class Dispositiu {
      * @param vehicle
      */
     public void setVehicle(String vehicle) {
-        this.vehicle=vehicle;
+        this.vehicle = vehicle;
     }
 
     /**
