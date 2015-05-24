@@ -1,6 +1,7 @@
 package cat.geodroid.geoapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -18,6 +19,7 @@ public class DispositiuActivity extends ActionBarActivity {
     Context context;
     CRUDClass crud;
     Bundle dades;
+    Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,56 +28,61 @@ public class DispositiuActivity extends ActionBarActivity {
 
         crud = new CRUDClass(context);
         context = this;
-        dades = getIntent().getExtras();
+        intent = getIntent();
+        dades = intent.getExtras();
 
         final EditText nom = (EditText) findViewById(R.id.nom_dispositiu);
         final EditText flota = (EditText) findViewById(R.id.flota);
         final Button actualitzar = (Button) findViewById(R.id.actualitza);
 
-        /**
-         * Carreguem vista des dels Markers de GMAPS. Anulem la possible edicio dels dispositius
-         */
-        if (dades.getString("ubicacio").equals("mapa")) {
-            //
-            nom.setKeyListener(null);
-            //nom.setEnabled(false);
-            //nom.setFocusable(false);
-            //nom.setClickable(false);
+        if (dades != null) {
+            /**
+             * Carreguem vista des dels Markers de GMAPS. Anulem la possible edicio dels dispositius
+             */
+            if (dades.containsKey("ubicacio")) {
 
-            flota.setKeyListener(null);
-            //flota.setEnabled(false);
-            //flota.setFocusable(false);
-            //flota.setClickable(false);
-            actualitzar.setVisibility(View.INVISIBLE);
+                if (dades.getString("ubicacio").equals("mapa")) {
+                    nom.setKeyListener(null);
+                    //nom.setEnabled(false);
+                    //nom.setFocusable(false);
+                    //nom.setClickable(false);
+
+                    flota.setKeyListener(null);
+                    //flota.setEnabled(false);
+                    //flota.setFocusable(false);
+                    //flota.setClickable(false);
+                    actualitzar.setVisibility(View.INVISIBLE);
+                }
+            }
+
+            /**
+             * Cerquem el dispositiu a la BBDD amb les
+             * dades passades al Bundle
+             */
+            int idDispositiu = dades.getInt("idDispositiu");
+            final Dispositiu dis = crud.getDispositiu(idDispositiu);
+
+            nom.setText(dis.getNom());
+            flota.setText(dis.getFlota());
+
+            /**
+             * Boto que gestiona l'actualitzacio del dispositiu
+             */
+            actualitzar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                dis.setNom(nom.getText().toString());
+                dis.setFlota(flota.getText().toString());
+
+                boolean success = crud.updateDispositiu(dis);
+                if (success){
+                    Toast.makeText(context, "Actualitzat correctament, prem enrere per tornar a la llista", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(context, "Actualitzat erroneament", Toast.LENGTH_SHORT).show();
+                }
+                }
+            });
         }
-
-        /**
-         * Cerquem el dispositiu a la BBDD amb les
-         * dades passades al Bundle
-         */
-        int idDispositiu = dades.getInt("idDispositiu");
-        final Dispositiu dis = crud.getDispositiu(idDispositiu);
-
-        nom.setText(dis.getNom());
-        flota.setText(dis.getFlota());
-
-        /**
-         * Boto que gestiona l'actualitzacio del dispositiu
-         */
-        actualitzar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-            dis.setNom(nom.getText().toString());
-            dis.setFlota(flota.getText().toString());
-
-            boolean success = crud.updateDispositiu(dis);
-            if (success){
-                Toast.makeText(context, "Actualitzat correctament, prem enrere per tornar a la llista", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(context, "Actualitzat erroneament", Toast.LENGTH_SHORT).show();
-            }
-            }
-        });
     }
 
     @Override

@@ -36,9 +36,9 @@ public class LlistaFlotaActivity extends ActionBarActivity {
         /**
          * Carreguem tots els dispositius relacionats al usuari a la List
          */
-        List<Dispositiu> dispositius = crud.getDispositiusEmpresa(dades.getInt("empresa"));
-
-        dispositiusAdapter = new DispositiusAdapter(LlistaFlotaActivity.this, dispositius);
+        //List<Dispositiu> dispositius = crud.getDispositiusEmpresa(dades.getInt("empresa"));
+        //dispositiusAdapter = new DispositiusAdapter(LlistaFlotaActivity.this, dispositius);
+        dispositiusAdapter = new DispositiusAdapter(LlistaFlotaActivity.this, crud.getDispositiusEmpresa(dades.getInt("empresa")));
         llista_dispositius = (ListView) findViewById(R.id.dispositius_listView);
         llista_dispositius.setAdapter(dispositiusAdapter);
 
@@ -72,6 +72,11 @@ public class LlistaFlotaActivity extends ActionBarActivity {
         public DispositiusAdapter(Context context, List<Dispositiu> llistat){
             this.llistat = llistat;
             this.context = context;
+        }
+
+        public void swapItems(List<Dispositiu> llistat) {
+            this.llistat = llistat;
+            notifyDataSetChanged();
         }
 
         @Override
@@ -115,6 +120,11 @@ public class LlistaFlotaActivity extends ActionBarActivity {
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        dispositiusAdapter.swapItems(crud.getDispositiusEmpresa(dades.getInt("empresa")));
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
