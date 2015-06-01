@@ -11,85 +11,40 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-
-import android.widget.CheckBox;
-import android.content.SharedPreferences;
-
-import android.os.AsyncTask;
-import android.app.ProgressDialog;
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import android.util.Log;
-
 import java.sql.SQLException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public class LoginActivity extends ActionBarActivity {
 
-    private String username, password;
-
-    private Button loginButton, rememberButton;
-    private EditText email, contrasenya;
+    Button loginButton, rememberButton;
+    EditText email, contrasenya;
     Context context;
-
-    protected static ConnectivityManager connMgr;
-
-    // Progress Dialog
-    private ProgressDialog pDialog;
-
-    JSONParser jsonParser = new JSONParser();
-    private int success; //to determine JSON signal login success/fail
-
-    // url to select the user (change accordingly)
-    private static String url_login = "http://192.168.1.10/html/login.php";
-
-    // JSON Node names
-    private static final String TAG_SUCCESS = "success";
-    private static final String TAG_MESSAGE = "message";
-    private static final String TAG_USERID = "id";
-    private static final String TAG_USERNAME = "nom";
-    private static final String TAG_EMAIL = "email";
-    private static final String TAG_ROLE = "rol";
-    private static final String TAG_PASSWD = "pwd";
-    private static final String TAG_IDEMPRESA = "id_empresa";
-
-    private CheckBox saveLoginCheckBox;
-    private SharedPreferences loginPreferences;
-    private SharedPreferences.Editor loginPrefsEditor;
-    private Boolean saveLogin;
+    CRUDClass crud;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        context = this;
+        crud = new CRUDClass(context);
+        /**
+         * Obrim BBDD, sino capturem ERROR
+         */
+        try {
+
+            crud.open();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         loginButton = (Button) findViewById(R.id.login_button);
+        rememberButton = (Button) findViewById(R.id.remember_button);
         email = (EditText) findViewById(R.id.email_text);
         contrasenya = (EditText) findViewById(R.id.contrasenya_text);
         context = getApplicationContext();
-
-        saveLoginCheckBox = (CheckBox)findViewById(R.id.saveLoginCheckBox);
-        loginPreferences = getSharedPreferences("loginPrefs", MODE_PRIVATE);
-        loginPrefsEditor = loginPreferences.edit();
-
-        saveLogin = loginPreferences.getBoolean("saveLogin", false);
-        if (saveLogin == true) {
-            email.setText(loginPreferences.getString("username", ""));
-            contrasenya.setText(loginPreferences.getString("password", ""));
-            saveLoginCheckBox.setChecked(true);
-        }
-
-        // Inicialitzem el connectivity manager.
-		connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-
 
         /**
          * Comprovem que les credencials existeixen a la BBDD.
@@ -98,150 +53,48 @@ public class LoginActivity extends ActionBarActivity {
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+            if(!email.getText().toString().matches("")||!contrasenya.getText().toString().matches("")) {
+                int existeixUsuari = 0;
 
-                username = email.getText().toString();
-                password = contrasenya.getText().toString();
+                /**
+                 * Busquem usuari amb les dades dels EditText
+                 */
+                Usuari u = crud.loguejaUsuari(email.getText().toString(), contrasenya.getText().toString());
 
-                if (!username.matches("") || !password.matches("")) {
+                /**
+                 * Si ha trobat l'usuari, carreguem dades a un Bundle,
+                 * fem un intent i l'executem
+                 */
+                if ((u !=null) && (existeixUsuari = u.id) >= 0) {
 
-                    if (comprovaConnexio()) {
-                        //call a new Login thread
-                        new LoginTask().execute();
+                    Intent intent = new Intent(LoginActivity.this, MenuActivity.class);
+                    intent.putExtra("email", email.getText().toString());
+                    intent.putExtra("contrasenya", email.getText().toString());
+                    intent.putExtra("tipusUsuari", u.getRol());
+                    intent.putExtra("idUsuari", u.getId());
+                    intent.putExtra("empresa", u.getId_empresa());
 
-			        } else {
-				        // No tenim connexió, error
-                        Toast.makeText(context, "No hi ha connexió de dades...", Toast.LENGTH_LONG).show();
-                    }
-
-                    if (saveLoginCheckBox.isChecked()) {
-                        loginPrefsEditor.putBoolean("saveLogin", true);
-                        loginPrefsEditor.putString("username", username);
-                        loginPrefsEditor.putString("password", password);
-                        loginPrefsEditor.commit();
-                    } else {
-                        loginPrefsEditor.clear();
-                        loginPrefsEditor.commit();
-                    }
-
-                } else {
-                    Toast.makeText(context, "Cal omplir els dos camps per a fer login", Toast.LENGTH_LONG).show();
+                    startActivity(intent);
+                }else{
+                    Toast.makeText(context, "Email i contrasenya no coincideixen", Toast.LENGTH_LONG).show();
                 }
+            }else{
+                Toast.makeText(context, "Cal omplir els dos camps per a fer login", Toast.LENGTH_LONG).show();
+            }
             }
         });
-    }
-
-    // True si tenim connexió, False en cas contrari.
-	public static Boolean comprovaConnexio() {
-
-		// Obtenim l'estat de la xarxa mòbil
-		NetworkInfo networkInfo = connMgr
-				.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-		boolean connectat3G = networkInfo.isConnected();
-
-		// Obtenim l'estat de la xarxaWi-Fi
-		networkInfo = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-		boolean connectatWifi = networkInfo.isConnected();
-
-		// O bé hem de tenir 3G o bé wifi
-		return connectat3G || connectatWifi;
-	}
-
-    /**
-     * Background Async Task to Login with username and password
-     *
-     * param params Void, no se li envia res en cridar-la (doInBackground no rep res)
-     * param Progress Object, tipus de la unitat de progrés
-     *                 que es genera durant el processament en 2n pla i que es
-     *                 passa al mètode onProgressUpdate() que interactua amb la UI.
-     * param Result, Void, el procés en 2n pla retorna null.
-     */
-    class LoginTask extends AsyncTask<String, String, String> {
-
-        Usuari usuari;
 
         /**
-         * Before starting background thread Show Progress Dialog
-         **/
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            pDialog = new ProgressDialog(LoginActivity.this);
-            pDialog.setMessage("Fent login amb "+ username +"...");
-            pDialog.setIndeterminate(false);
-            pDialog.setCancelable(true);
-            pDialog.show();
-        }
-
-        /**
-         * Selecting the user
-         **/
-        @Override
-        protected String doInBackground(String... params) {
-
-            // Building Parameters
-            List<NameValuePair> postValues = new ArrayList<NameValuePair>();
-            postValues.add(new BasicNameValuePair("usuari", username));
-            postValues.add(new BasicNameValuePair("contrasenya", password));
-
-
-            // getting JSON Object
-            // Note that login url accepts POST method
-            JSONObject json = jsonParser.makeHttpRequest(url_login, "POST", postValues);
-
-            // check log cat from response
-            //Log.d("Login Response", json.toString());
-
-            // check for success tag
-            try {
-                success = json.getInt(TAG_SUCCESS);
-
-                if (success == 1) {
-                    // successfully logged in
-
-                    usuari = new Usuari(json.getInt(TAG_USERID),
-                            json.getString(TAG_USERNAME),
-                            json.getString(TAG_EMAIL),
-                            json.getInt(TAG_ROLE),
-                            json.getString(TAG_PASSWD),
-                            json.getInt(TAG_IDEMPRESA));
-
-                } else {
-                    // failed to login
-                    usuari = null;
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
+         * Botó que carregarà un formulari per
+         * a recordar el password a l'usuari
+         */
+        rememberButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+            String text = "A implementar en un futur, envia'ns un correu a hola@geodroid.cat per a mes info";
+            Toast.makeText(context, text, Toast.LENGTH_SHORT).show();
             }
-            return null;
-        }
-
-        /**
-         * After completing background task Dismiss the progress dialog
-         *
-         **/
-        @Override
-        protected void onPostExecute(String result) {
-            super.onPostExecute(result);
-            // dismiss the dialog once done
-            pDialog.dismiss();
-
-            if ((usuari != null) && (usuari.getId()) >= 0) {
-
-                Toast.makeText(getApplicationContext(), "Login correcte!", Toast.LENGTH_LONG).show();
-
-                Intent intent = new Intent(LoginActivity.this, MenuActivity.class);
-                intent.putExtra("email", email.getText().toString());
-                intent.putExtra("contrasenya", email.getText().toString());
-                intent.putExtra("tipusUsuari", usuari.getRol());
-                intent.putExtra("idUsuari", usuari.getId());
-                intent.putExtra("empresa", usuari.getId_empresa());
-
-                startActivity(intent);
-
-            } else {
-                Toast.makeText(getApplicationContext(), "Login fallit!", Toast.LENGTH_LONG).show();
-            }
-        }
+        });
     }
 
     @Override

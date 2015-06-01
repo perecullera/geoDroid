@@ -13,50 +13,20 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import android.app.ProgressDialog;
-import android.os.AsyncTask;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-
-import java.util.List;
-import java.util.ArrayList;
+import cat.geodroid.geoapp.R;
 
 public class DispositiuActivity extends ActionBarActivity {
     Context context;
+    CRUDClass crud;
     Bundle dades;
     Intent intent;
-    Dispositiu dis;
-
-    // Progress Dialog
-    private ProgressDialog pDialog;
-
-    private static final String URL_DISPOSITIU = "http://192.168.1.10/html/upd_dispositiu.php";
-
-    private int success; //to determine JSON signal login success/fail
-    private String message; //to capture JSON message node text
-
-    // JSON Node names
-    private static final String TAG_SUCCESS = "success";
-    private static final String TAG_MESSAGE = "message";
-    private static final String TAG_DEVICEID = "id";
-    private static final String TAG_DEVICENAME = "nom";
-    private static final String TAG_FLOTA = "flota";
-    private static final String TAG_LAT = "latitud";
-    private static final String TAG_LNG = "longitud";
-    private static final String TAG_VEHICLE = "vehicle";
-    private static final String TAG_CARREGA = "carrega";
-    private static final String TAG_IDEMPRESA = "id_empresa";
-    private static final String TAG_IDUSUARI = "id_usuari";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dispositiu);
 
+        crud = new CRUDClass(context);
         context = this;
         intent = getIntent();
         dades = intent.getExtras();
@@ -89,20 +59,8 @@ public class DispositiuActivity extends ActionBarActivity {
              * Cerquem el dispositiu a la BBDD amb les
              * dades passades al Bundle
              */
-            try {
-
-                JSONObject json = new JSONObject(dades.getString("jsonDispositiu"));
-
-                dis = new Dispositiu();
-                dis.setId(json.getInt(TAG_DEVICEID));
-                dis.setNom(json.getString(TAG_DEVICENAME));
-                dis.setFlota(json.getString(TAG_FLOTA));
-                dis.setVehicle(json.getString(TAG_VEHICLE));
-                dis.setPosition(json.getDouble(TAG_LAT), json.getDouble(TAG_LNG));
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+            int idDispositiu = dades.getInt("idDispositiu");
+            final Dispositiu dis = crud.getDispositiu(idDispositiu);
 
             nom.setText(dis.getNom());
             flota.setText(dis.getFlota());
@@ -113,85 +71,17 @@ public class DispositiuActivity extends ActionBarActivity {
             actualitzar.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    dis.setNom(nom.getText().toString());
-                    dis.setFlota(flota.getText().toString());
+                dis.setNom(nom.getText().toString());
+                dis.setFlota(flota.getText().toString());
 
-                     // updating dispositiu via AsyncTask
-                    new UpdateDispositiuTask().execute();
+                boolean success = crud.updateDispositiu(dis);
+                if (success){
+                    Toast.makeText(context, "Actualitzat correctament, prem enrere per tornar a la llista", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(context, "Actualitzat erroneament", Toast.LENGTH_SHORT).show();
+                }
                 }
             });
-        }
-    }
-
-    /**
-     *
-     */
-    public void updateDispositiu() {
-
-        JSONParser jsonParser = new JSONParser();
-
-        // Building Parameters
-        List<NameValuePair> postValues = new ArrayList<NameValuePair>();
-        postValues.add(new BasicNameValuePair("id_dispositiu", String.valueOf(dis.getId())));
-        postValues.add(new BasicNameValuePair("nom", dis.getNom()));
-        postValues.add(new BasicNameValuePair("flota", dis.getFlota()));
-        //postValues.add(new BasicNameValuePair("vehicle", dis.getVehicle()));
-        //postValues.add(new BasicNameValuePair("latitud", String.valueOf(dis.getLat())));
-        //postValues.add(new BasicNameValuePair("longitud", String.valueOf(dis.getLong())));
-
-        // getting JSON Object
-        // Note that login url accepts POST method
-        JSONObject json = jsonParser.makeHttpRequest(URL_DISPOSITIU, "POST", postValues);
-
-        // check log cat from response
-        //Log.d("Update Response", json.toString());
-
-        // check for success tag
-        try {
-            success = json.getInt(TAG_SUCCESS);
-            message = json.getString(TAG_MESSAGE);
-
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public class UpdateDispositiuTask extends AsyncTask<Void, Void, Boolean> {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            pDialog = new ProgressDialog(DispositiuActivity.this);
-            pDialog.setMessage("Actualitzant les dades...");
-            pDialog.setIndeterminate(false);
-            pDialog.setCancelable(true);
-            pDialog.show();
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... arg0) {
-            updateDispositiu();
-            return null;
-
-        }
-
-        @Override
-        protected void onPostExecute(Boolean result) {
-            super.onPostExecute(result);
-            pDialog.dismiss();
-
-            if (success == 1) {
-                // dispositiu updated successfully
-
-                Toast.makeText(context, "Actualitzat correctament, prem enrere per tornar a la llista", Toast.LENGTH_SHORT).show();
-
-            } else {
-                // failed to update dispositiu
-                Toast.makeText(context, "Actualització fallida!", Toast.LENGTH_SHORT).show();
-                Log.e("Update Response", message);
-            }
-
         }
     }
 
