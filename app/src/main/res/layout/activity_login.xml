@@ -66,14 +66,13 @@
         android:layout_below="@+id/contrasenya_text"
         android:layout_centerHorizontal="true" />
 
-    <Button
-        style="?android:attr/buttonStyleSmall"
+    <CheckBox
+        android:id="@+id/saveLoginCheckBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Recordar Contrasenya"
-        android:id="@+id/remember_button"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentLeft="false"
+        android:layout_below="@+id/contrasenya_text"
+        android:layout_centerHorizontal="true"
+        android:text="Recordar credencials?" />
 
 </RelativeLayout>
