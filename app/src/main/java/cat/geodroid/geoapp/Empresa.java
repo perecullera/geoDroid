@@ -1,7 +1,7 @@
 package cat.geodroid.geoapp;
 
 /**
- * Created by Victor LLucia , Raul Ortega on 31/3/15.
+ * Created by Victor LLucià , Raul Ortega on 31/3/15.
  */
 public class Empresa {
     public int id;
