@@ -2,27 +2,42 @@ package cat.geodroid.geoapp;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import java.io.Serializable;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Created by Victor LLuciÃ , Ricard Moya on 31/3/15.
  */
-public class Dispositiu implements Serializable {
+public class Dispositiu  {
     //TODO generate atributes, getters and setters
     private int id_dispositiu;
+    private String nom;
     private String flota;
-    private Double longitud;
     private Double latitud;
+    private Double longitud;
     private String vehicle;
     private String carrega;
     private int id_empresa;
     private int id_usuari;
-    private String nom;
 
     /**
      * Constructor buit de Dispositiu
      */
     public Dispositiu() {}
+
+    public Dispositiu (int id_dispositiu, String nom, String flota, Double latitud,
+                       Double longitud, String vehicle, String carrega, int empresa, int id_usuari) {
+
+        this.id_dispositiu = id_dispositiu;
+        this.nom = nom;
+        this.flota = flota;
+        this.latitud = latitud;
+        this.longitud = longitud;
+        this.vehicle = vehicle;
+        this.carrega = carrega;
+        this.id_empresa = empresa;
+        this.id_usuari = id_usuari;
+    }
 
     /**
      * Constructor amb elements de Dispositiu
@@ -184,5 +199,32 @@ public class Dispositiu implements Serializable {
      */
     public String getNom() {
         return nom;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public String toJSON() {
+
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("id", getId());
+            jsonObject.put("nom", getNom());
+            jsonObject.put("flota", getFlota());
+            jsonObject.put("latitud", getLat());
+            jsonObject.put("longitud", getLong());
+            jsonObject.put("vehicle", getVehicle());
+            jsonObject.put("carrega", getCarrega());
+            jsonObject.put("id_empresa", getId_empresa());
+            jsonObject.put("id_usuari", getId_usuari());
+
+            return jsonObject.toString();
+
+        } catch (JSONException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return "";
+        }
     }
 }

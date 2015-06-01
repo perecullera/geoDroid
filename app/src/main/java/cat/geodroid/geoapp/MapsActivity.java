@@ -8,6 +8,13 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.widget.Toast;
 
+import android.app.ProgressDialog;
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONArray;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.maps.CameraUpdate;
@@ -26,6 +33,8 @@ import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Iterator;
+import java.util.Map;
 
 import android.content.Intent;
 
@@ -47,10 +56,35 @@ public class MapsActivity extends FragmentActivity implements OnInfoWindowClickL
 
     private GoogleMap mGMap; // Might be null if Google Play services APK is not available.
 
-    private Context context ;
+    private Context context;
     private Bundle dades;
-    private CRUDClass data;
     private MarkerOptions markerOptions;
+
+    // Progress Dialog
+    private ProgressDialog pDialog;
+
+    // url to select the user (change accordingly)
+    private static final String URL_DISPOSITIUS = "http://192.168.1.10/html/dispositius.php";
+
+    JSONParser jsonParser = new JSONParser();
+    private int success; //to determine JSON signal login success/fail
+
+    // JSON Node names
+    private static final String TAG_SUCCESS = "success";
+    private static final String TAG_MESSAGE = "message";
+    private static final String TAG_DEVICES = "dispositius";
+    private static final String TAG_DEVICEID = "id";
+    private static final String TAG_DEVICENAME = "nom";
+    private static final String TAG_FLOTA = "flota";
+    private static final String TAG_LAT = "latitud";
+    private static final String TAG_LNG = "longitud";
+    private static final String TAG_VEHICLE = "vehicle";
+    private static final String TAG_CARREGA= "carrega";
+    private static final String TAG_IDEMPRESA = "id_empresa";
+    private static final String TAG_IDUSUARI = "id_usuari";
+
+
+    private HashMap<Integer, Dispositiu> dispositiusMapper = new HashMap<Integer, Dispositiu>();
 
     private HashMap<Marker, Dispositiu> dispositiuMarkerMap = new HashMap<Marker, Dispositiu>();
 
@@ -87,6 +121,7 @@ public class MapsActivity extends FragmentActivity implements OnInfoWindowClickL
                     int padding = 150; // offset from edges of the map in pixels
                     CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, padding);
                     mGMap.animateCamera(cu);
+                    //mGMap.moveCamera(cu);
                 }
             });
 
@@ -157,17 +192,24 @@ public class MapsActivity extends FragmentActivity implements OnInfoWindowClickL
      * del mètode addMarker de l'objecte que representa el mapa.
      *
      * param params Void, no se li envia res en cridar-la
-     * param Progress MarkerOptions, tipus de la unitat de progrés
+     * param Progress Object, tipus de la unitat de progrés
      *                 que es genera durant el processament en 2n pla i que es
      *                 passa al mètode onProgressUpdate() que interactua amb la UI.
      * param Result, Void, el procés en 2n pla retorna null.
      */
     private class SetMarkersTask extends AsyncTask<Void, Object, Void> {
 
+        Dispositiu dispositiu;
+
         protected void onPreExecute() {
-            // Turn progress spinner on
-            setProgressBarIndeterminateVisibility(false);
+            super.onPreExecute();
+            pDialog = new ProgressDialog(MapsActivity.this);
+            pDialog.setMessage("Carregant dispositius...");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(true);
+            pDialog.show();
         }
+
         /**
          * Mètode que corre en un fil en 2n pla: no interfereix amb la UI
          *
@@ -178,33 +220,63 @@ public class MapsActivity extends FragmentActivity implements OnInfoWindowClickL
             // Does NOT run on UI thread
             // Long-running operations go here;
 
-            // Instanciem la classe auxiliar que permet obtenir els marcadors
-            // a partir de la informació de la BD
-            data = new CRUDClass(context);
-            try {
-                data.open();
+            // Building Parameters
+            List<NameValuePair> postValues = new ArrayList<NameValuePair>();
+            postValues.add(new BasicNameValuePair("id_empresa", String.valueOf(dades.getInt("empresa"))));
 
-            } catch (Exception e) {
-                Log.i("ERROR", "Marcador no carregat");
+            // getting JSON Object
+            // Note that login url accepts POST method
+            JSONObject json = jsonParser.makeHttpRequest(URL_DISPOSITIUS, "POST", postValues);
+
+            // check log cat from response
+            //Log.d("DispositiusEmpresa Response", json.toString());
+
+            // check for success tag
+            try {
+                success = json.getInt(TAG_SUCCESS);
+
+                if (success == 1) {
+                    // dispositius retrieved successfully
+
+                    JSONArray jsonArray = json.getJSONArray(TAG_DEVICES);
+
+                    if (jsonArray != null) {
+                       int len = jsonArray.length();
+                       for (int i = 0; i < len; i++) {
+
+                           JSONObject obj = jsonArray.getJSONObject(i);
+
+                           dispositiu = new Dispositiu();
+                           dispositiu.setId(obj.getInt(TAG_DEVICEID));
+                           dispositiu.setNom(obj.getString(TAG_DEVICENAME));
+                           dispositiu.setFlota(obj.getString(TAG_FLOTA));
+                           dispositiu.setVehicle(obj.getString(TAG_VEHICLE));
+                           dispositiu.setPosition(obj.getDouble(TAG_LAT), obj.getDouble(TAG_LNG));
+
+                           dispositiusMapper.put(dispositiu.getId(), dispositiu);
+                       }
+                    }
+
+                } else {
+                    // failed to retrieve dispositius
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
 
-            //DEBUG per inserció de valors a la BDD
-            debugging();
-            // Carreguem en una llista els marcadors obtinguts de la BD
-            //List<Dispositiu> m = data.getDispositius();
-            List<Dispositiu> m = data.getDispositiusEmpresa(dades.getInt("empresa"));
-
-            // Si obtenim marcadors
-            if (!m.isEmpty()) {
+            // Si hem obtingut dispositius
+            if (!dispositiusMapper.isEmpty()) {
 
                 //Per calcular la mitjana dels punts en el mapa
                 LatLngBounds.Builder builder = new LatLngBounds.Builder();
 
                 // Obtenim les característiques de cada marcador i les
                 // passem a l'API de GMaps
-                for (int i = 0; i < m.size(); i++) {
+                Iterator it = dispositiusMapper.entrySet().iterator();
+                while (it.hasNext()) {
+                    Map.Entry pair = (Map.Entry)it.next();
 
-                    Dispositiu d = m.get(i);
+                    Dispositiu d = (Dispositiu) pair.getValue();
                     builder.include(d.getPosition());
 
                     double lat = d.getLat();
@@ -225,6 +297,7 @@ public class MapsActivity extends FragmentActivity implements OnInfoWindowClickL
             }
             return null;
         }
+
         /**
          * Mètode que corre al fil de la UI
          *
@@ -246,12 +319,12 @@ public class MapsActivity extends FragmentActivity implements OnInfoWindowClickL
             // Add newly-created marker to map
             m = mGMap.addMarker((MarkerOptions) params[0]);
             dispositiuMarkerMap.put(m, (Dispositiu) params[1]);
-
         }
 
         protected void onPostExecute(Void result) {
-            // Turn off progress spinner
-            setProgressBarIndeterminateVisibility(false);
+            super.onPostExecute(result);
+            // dismiss the dialog once done
+            pDialog.dismiss();
         }
     }
 
@@ -262,14 +335,8 @@ public class MapsActivity extends FragmentActivity implements OnInfoWindowClickL
 
         Intent intent = new Intent(MapsActivity.this, DispositiuActivity.class);
         intent.putExtra("ubicacio", "mapa");
-        intent.putExtra("idDispositiu", dispositiuMarkerMap.get(marker).getId());
+        //intent.putExtra("idDispositiu", dispositiuMarkerMap.get(marker).getId());
+        intent.putExtra("jsonDispositiu", dispositiusMapper.get(dispositiuMarkerMap.get(marker).getId()).toJSON());
         startActivity(intent);
      }
-
-    /**
-     * Mètode per a insertar dispositius posicionats per a debugging
-     */
-    protected void debugging(){
-    }
-
 }

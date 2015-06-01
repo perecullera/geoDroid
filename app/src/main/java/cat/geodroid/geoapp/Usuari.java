@@ -7,10 +7,34 @@ public class Usuari {
     //TODO generate atributes, getters and setters
     int id;
     String nom;
+    String email;
     int rol;
     String pwd;
     int id_empresa;
-    String email;
+
+    /**
+     * Constructor d'Usuari
+     */
+    public Usuari() {
+    }
+
+    /**
+     * Constructor d'Usuari
+     * @param id
+     * @param nom
+     * @param email
+     * @param rol
+     * @param pwd
+     * @param id_empresa
+     */
+    public Usuari(int id, String nom, String email, int rol, String pwd, int id_empresa) {
+        this.id = id;
+        this.nom = nom;
+        this.email = email;
+        this.rol = rol;
+        this.pwd = pwd;
+        this.id_empresa = id_empresa;
+    }
 
     /**
      * Getter password Usuari
