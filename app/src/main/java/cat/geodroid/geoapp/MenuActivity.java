@@ -46,7 +46,6 @@ public class MenuActivity extends ActionBarActivity {
             public void onClick(View v) {
             Intent intent = new Intent(MenuActivity.this, MapsActivity.class);
             intent.putExtra("empresa", dades.getInt("empresa"));
-            //Toast.makeText(getApplicationContext(), "Falta GooglePlayServices a Genymotion", Toast.LENGTH_SHORT).show();
             startActivity(intent);
             }
         });

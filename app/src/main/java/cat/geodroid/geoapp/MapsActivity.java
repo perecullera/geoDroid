@@ -75,11 +75,11 @@ public class MapsActivity extends FragmentActivity implements OnInfoWindowClickL
     private ProgressDialog pDialog;
 
     // url to fetch dispositius
-    private static final String URL_DISPOSITIUS = "http://192.168.1.10/geodroid/dispositius.php";
-    //private static final String URL_DISPOSITIUS = "http://serasihay.ddns.net:23080/geodroid/dispositius.php"
+    //private static final String URL_DISPOSITIUS = "http://192.168.1.10/geodroid/dispositius.php";
+    private static final String URL_DISPOSITIUS = "http://serasihay.ddns.net:23080/geodroid/dispositius.php";
 
     //MOCKING
-    private static final String URL_ONTHEMOVE = "http://192.168.1.10/geodroid/on_the_move.php";;
+    //private static final String URL_ONTHEMOVE = "http://192.168.1.10/geodroid/on_the_move.php";
     //private static final String URL_ONTHEMOVE = "http://serasihay.ddns.net:23080/geodroid/on_the_move.php";
 
     JSONParser jsonParser = new JSONParser();
@@ -408,6 +408,7 @@ public class MapsActivity extends FragmentActivity implements OnInfoWindowClickL
 
 
     //MOCKING
+    /*
     public void callAsynchronousTask() {
         final Handler handler = new Handler();
         Timer timer = new Timer();
@@ -441,6 +442,7 @@ public class MapsActivity extends FragmentActivity implements OnInfoWindowClickL
         };
         timer.schedule(doAsynchronousTask, 0, 3000); //execute in every 50000 ms
     }
+    */
 
     @Override
     public void onInfoWindowClick(Marker marker) {

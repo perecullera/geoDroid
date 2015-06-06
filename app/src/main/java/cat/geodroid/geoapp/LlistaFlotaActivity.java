@@ -32,8 +32,8 @@ public class LlistaFlotaActivity extends ListActivity {
     // Progress Dialog
     private ProgressDialog pDialog;
 
-    private static final String URL_DISPOSITIUS = "http://192.168.1.10/geodroid/dispositius.php";
-    //private static final String URL_DISPOSITIUS = "http://serasihay.ddns.net:23080/geodroid/dispositius.php";
+    //private static final String URL_DISPOSITIUS = "http://192.168.1.10/geodroid/dispositius.php";
+    private static final String URL_DISPOSITIUS = "http://serasihay.ddns.net:23080/geodroid/dispositius.php";
 
     private int success; //to determine JSON signal login success/fail
 

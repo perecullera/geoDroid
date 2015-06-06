@@ -52,8 +52,8 @@ public class LoginActivity extends ActionBarActivity {
     private int success; //to determine JSON signal login success/fail
 
     // url to select the user (change accordingly)
-    private static final String URL_LOGIN = "http://192.168.1.10/geodroid/login.php";
-    //private static final String URL_LOGIN = "http://serasihay.ddns.net:23080/geodroid/login.php";
+    //private static final String URL_LOGIN = "http://192.168.1.10/geodroid/login.php";
+    private static final String URL_LOGIN = "http://serasihay.ddns.net:23080/geodroid/login.php";
 
     // JSON Node names
     private static final String TAG_SUCCESS = "success";

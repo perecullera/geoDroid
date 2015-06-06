@@ -35,8 +35,8 @@ public class DispositiuActivity extends ActionBarActivity {
     // Progress Dialog
     private ProgressDialog pDialog;
 
-    private static final String URL_DISPOSITIU = "http://192.168.1.10/geodroid/upd_dispositiu.php";
-    //private static final String URL_DISPOSITIU = "http://serasihay.ddns.net:23080/geodroid/upd_dispositiu.php";
+    //private static final String URL_DISPOSITIU = "http://192.168.1.10/geodroid/upd_dispositiu.php";
+    private static final String URL_DISPOSITIU = "http://serasihay.ddns.net:23080/geodroid/upd_dispositiu.php";
 
     private int success; //to determine JSON signal login success/fail
     private String message; //to capture JSON message node text
