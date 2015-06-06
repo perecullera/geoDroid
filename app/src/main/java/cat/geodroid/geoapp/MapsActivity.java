@@ -117,16 +117,7 @@ public class MapsActivity extends FragmentActivity implements OnInfoWindowClickL
         dades = getIntent().getExtras();
 
         // Comprovem si els Google Play Services estan disponibles.
-        int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getBaseContext());
-
-        // Avisem a l'usuari que no hi ha Google Play Services
-        if (status != ConnectionResult.SUCCESS) { // Google Play Services are not available
-
-            int requestCode = 666;
-            Dialog dialog = GooglePlayServicesUtil.getErrorDialog(status, this, requestCode);
-            dialog.show();
-
-        } else { // Google Play Services are available
+        if (checkGPlayServices()) {
 
             setUpMapIfNeeded();
 
@@ -155,7 +146,32 @@ public class MapsActivity extends FragmentActivity implements OnInfoWindowClickL
     @Override
     protected void onResume() {
         super.onResume();
-        setUpMapIfNeeded();
+        if (checkGPlayServices()) {
+
+            setUpMapIfNeeded();
+        }
+    }
+
+    /**
+     * Comprova que els Google Play Services estan disponibles.
+     * Són imprescindibles per accedir a l'API de Google Maps....
+     *
+     */
+    private boolean checkGPlayServices() {
+        // Comprovem si els Google Play Services estan disponibles.
+        int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getBaseContext());
+
+        // Avisem a l'usuari que no hi ha Google Play Services
+        if (status != ConnectionResult.SUCCESS) { // Google Play Services are not available
+
+            int requestCode = 666;
+            Dialog dialog = GooglePlayServicesUtil.getErrorDialog(status, this, requestCode);
+            dialog.show();
+            return false;
+
+        } else { // Google Play Services are available
+            return true;
+        }
     }
 
     /**
