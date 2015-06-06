@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import android.app.ProgressDialog;
@@ -34,7 +35,8 @@ public class DispositiuActivity extends ActionBarActivity {
     // Progress Dialog
     private ProgressDialog pDialog;
 
-    private static final String URL_DISPOSITIU = "http://192.168.1.10/html/upd_dispositiu.php";
+    private static final String URL_DISPOSITIU = "http://192.168.1.10/geodroid/upd_dispositiu.php";
+    //private static final String URL_DISPOSITIU = "http://serasihay.ddns.net:23080/geodroid/upd_dispositiu.php";
 
     private int success; //to determine JSON signal login success/fail
     private String message; //to capture JSON message node text
@@ -72,6 +74,10 @@ public class DispositiuActivity extends ActionBarActivity {
             if (dades.containsKey("ubicacio")) {
 
                 if (dades.getString("ubicacio").equals("mapa")) {
+
+                    TextView tv1 = (TextView)findViewById(R.id.tvDispositiu);
+                    tv1.setText("Info Dispositiu");
+
                     nom.setKeyListener(null);
                     //nom.setEnabled(false);
                     //nom.setFocusable(false);
@@ -179,7 +185,10 @@ public class DispositiuActivity extends ActionBarActivity {
         @Override
         protected void onPostExecute(Boolean result) {
             super.onPostExecute(result);
-            pDialog.dismiss();
+            // dismiss the dialog once done
+            if (pDialog.isShowing()) {
+                pDialog.dismiss();
+            }
 
             if (success == 1) {
                 // dispositiu updated successfully

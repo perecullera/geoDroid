@@ -1,7 +1,10 @@
 package cat.geodroid.geoapp;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.provider.Settings;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -36,7 +39,7 @@ public class LoginActivity extends ActionBarActivity {
 
     private String username, password;
 
-    private Button loginButton, rememberButton;
+    private Button loginButton;
     private EditText email, contrasenya;
     Context context;
 
@@ -49,7 +52,8 @@ public class LoginActivity extends ActionBarActivity {
     private int success; //to determine JSON signal login success/fail
 
     // url to select the user (change accordingly)
-    private static String url_login = "http://192.168.1.10/html/login.php";
+    private static final String URL_LOGIN = "http://192.168.1.10/geodroid/login.php";
+    //private static final String URL_LOGIN = "http://serasihay.ddns.net:23080/geodroid/login.php";
 
     // JSON Node names
     private static final String TAG_SUCCESS = "success";
@@ -110,7 +114,9 @@ public class LoginActivity extends ActionBarActivity {
 
 			        } else {
 				        // No tenim connexió, error
-                        Toast.makeText(context, "No hi ha connexió de dades...", Toast.LENGTH_LONG).show();
+                        //Toast.makeText(context, "No hi ha connexió de dades...", Toast.LENGTH_LONG).show();
+
+                        showNoConnectionDialog(LoginActivity.this);
                     }
 
                     if (saveLoginCheckBox.isChecked()) {
@@ -145,6 +151,37 @@ public class LoginActivity extends ActionBarActivity {
 		// O bé hem de tenir 3G o bé wifi
 		return connectat3G || connectatWifi;
 	}
+
+    /**
+     * Display a dialog that user has no internet connection
+     * @param ctx1
+     *
+     * Code from: http://osdir.com/ml/Android-Developers/2009-11/msg05044.html
+     */
+    public static void showNoConnectionDialog(Context ctx1) {
+        final Context ctx = ctx1;
+        AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+        builder.setCancelable(true);
+        builder.setMessage("Cal accés a Internet...\n" +
+                            "Activa la connexió de dades mòbils o el Wi-Fi.");
+        builder.setTitle("Connexió fallida");
+        builder.setPositiveButton("Configurar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                ctx.startActivity(new Intent(Settings.ACTION_WIRELESS_SETTINGS));
+            }
+        });
+        builder.setNegativeButton("Cancel·lar", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                return;
+            }
+        });
+        builder.setOnCancelListener(new DialogInterface.OnCancelListener() {
+            public void onCancel(DialogInterface dialog) {
+                return;
+            }
+        });
+        builder.show();
+    }
 
     /**
      * Background Async Task to Login with username and password
@@ -186,7 +223,7 @@ public class LoginActivity extends ActionBarActivity {
 
             // getting JSON Object
             // Note that login url accepts POST method
-            JSONObject json = jsonParser.makeHttpRequest(url_login, "POST", postValues);
+            JSONObject json = jsonParser.makeHttpRequest(URL_LOGIN , "POST", postValues);
 
             // check log cat from response
             //Log.d("Login Response", json.toString());
@@ -223,7 +260,9 @@ public class LoginActivity extends ActionBarActivity {
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
             // dismiss the dialog once done
-            pDialog.dismiss();
+            if (pDialog.isShowing()) {
+                pDialog.dismiss();
+            }
 
             if ((usuari != null) && (usuari.getId()) >= 0) {
 

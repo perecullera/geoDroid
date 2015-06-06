@@ -32,7 +32,8 @@ public class LlistaFlotaActivity extends ListActivity {
     // Progress Dialog
     private ProgressDialog pDialog;
 
-    private static final String URL_DISPOSITIUS = "http://192.168.1.10/html/dispositius.php";
+    private static final String URL_DISPOSITIUS = "http://192.168.1.10/geodroid/dispositius.php";
+    //private static final String URL_DISPOSITIUS = "http://serasihay.ddns.net:23080/geodroid/dispositius.php";
 
     private int success; //to determine JSON signal login success/fail
 
@@ -50,9 +51,9 @@ public class LlistaFlotaActivity extends ListActivity {
     private static final String TAG_IDEMPRESA = "id_empresa";
     private static final String TAG_IDUSUARI = "id_usuari";
 
-    // An array of all of our comments
+    // An array of all of our dispositius
     private JSONArray mDispositius = null;
-    // manages all of our comments in a list.
+    // manages all of our dispositius in a list.
     private ArrayList<HashMap<String, String>> mDispositiuList;
 
     private HashMap<Integer, Dispositiu> mDispositiusMapper;
@@ -214,7 +215,10 @@ public class LlistaFlotaActivity extends ListActivity {
         @Override
         protected void onPostExecute(Boolean result) {
             super.onPostExecute(result);
-            pDialog.dismiss();
+            // dismiss the dialog once done
+            if (pDialog.isShowing()) {
+                pDialog.dismiss();
+            }
             updateList();
         }
     }

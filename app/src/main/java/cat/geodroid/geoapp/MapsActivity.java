@@ -4,12 +4,19 @@ import android.app.Dialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
+import android.text.Html;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import android.app.ProgressDialog;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -30,11 +37,15 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.GoogleMap.OnMarkerClickListener;
 import com.google.android.gms.maps.GoogleMap.OnInfoWindowClickListener;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import android.content.Intent;
 
@@ -63,8 +74,13 @@ public class MapsActivity extends FragmentActivity implements OnInfoWindowClickL
     // Progress Dialog
     private ProgressDialog pDialog;
 
-    // url to select the user (change accordingly)
-    private static final String URL_DISPOSITIUS = "http://192.168.1.10/html/dispositius.php";
+    // url to fetch dispositius
+    private static final String URL_DISPOSITIUS = "http://192.168.1.10/geodroid/dispositius.php";
+    //private static final String URL_DISPOSITIUS = "http://serasihay.ddns.net:23080/geodroid/dispositius.php"
+
+    //MOCKING
+    private static final String URL_ONTHEMOVE = "http://192.168.1.10/geodroid/on_the_move.php";;
+    //private static final String URL_ONTHEMOVE = "http://serasihay.ddns.net:23080/geodroid/on_the_move.php";
 
     JSONParser jsonParser = new JSONParser();
     private int success; //to determine JSON signal login success/fail
@@ -83,12 +99,14 @@ public class MapsActivity extends FragmentActivity implements OnInfoWindowClickL
     private static final String TAG_IDEMPRESA = "id_empresa";
     private static final String TAG_IDUSUARI = "id_usuari";
 
-
     private HashMap<Integer, Dispositiu> dispositiusMapper = new HashMap<Integer, Dispositiu>();
 
     private HashMap<Marker, Dispositiu> dispositiuMarkerMap = new HashMap<Marker, Dispositiu>();
 
     LatLngBounds bounds; //per calcular la mitjana dels markers
+
+    //MOCKING
+    List<Marker> lMarkers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,8 +129,13 @@ public class MapsActivity extends FragmentActivity implements OnInfoWindowClickL
         } else { // Google Play Services are available
 
             setUpMapIfNeeded();
+
+            //REAL
             SetMarkersTask markersTask = new SetMarkersTask();
             markersTask.execute();
+
+            //MOCKING
+            //callAsynchronousTask();
 
             //centre el mapa segons mitjana dels punts en el mapa
             mGMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
@@ -149,6 +172,27 @@ public class MapsActivity extends FragmentActivity implements OnInfoWindowClickL
             // Getting GoogleMap object from the fragment
             mGMap = fm.getMap();
             mGMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
+
+            mGMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
+                @Override
+                public View getInfoWindow(Marker arg0) {
+                    return null;
+                }
+
+                @Override
+                public View getInfoContents(Marker marker) {
+
+                    View v = getLayoutInflater().inflate(R.layout.marker, null);
+
+                    TextView info = (TextView) v.findViewById(R.id.info);
+
+                    info.setText((Html.fromHtml("<b>" + marker.getTitle() + "</b>" + "<br />" +
+                            "<small>" + marker.getSnippet() + "</small>" + "<br />" +
+                            "<small> <b>Posició: </b>" + marker.getPosition().toString() + "</small>")));
+
+                    return v;
+                }
+            });
 
             UiSettings uiSettings = mGMap.getUiSettings();
             uiSettings.setCompassEnabled(true);
@@ -193,7 +237,7 @@ public class MapsActivity extends FragmentActivity implements OnInfoWindowClickL
      *
      * param params Void, no se li envia res en cridar-la
      * param Progress Object, tipus de la unitat de progrés
-     *                 que es genera durant el processament en 2n pla i que es
+     *                 que es genera durant el processament en 2n pla, que es
      *                 passa al mètode onProgressUpdate() que interactua amb la UI.
      * param Result, Void, el procés en 2n pla retorna null.
      */
@@ -282,7 +326,7 @@ public class MapsActivity extends FragmentActivity implements OnInfoWindowClickL
                     double lat = d.getLat();
                     double lng = d.getLong();
                     LatLng latlong = new LatLng(lat, lng);
-                    String snippet = d.getVehicle()+" \n "+ d.getFlota();
+                    String snippet = "<b>Vehicle: </b>"+ d.getVehicle() +"<br /> <b>Flota: </b>"+ d.getFlota();
                     markerOptions = new MarkerOptions()
                             .title(d.getNom())
                             .position(latlong)
@@ -318,14 +362,68 @@ public class MapsActivity extends FragmentActivity implements OnInfoWindowClickL
             Marker m;
             // Add newly-created marker to map
             m = mGMap.addMarker((MarkerOptions) params[0]);
+
+            //MOCKING
+            //lMarkers.add(m);
+
             dispositiuMarkerMap.put(m, (Dispositiu) params[1]);
         }
 
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
             // dismiss the dialog once done
-            pDialog.dismiss();
+            if (pDialog.isShowing()) {
+                pDialog.dismiss();
+		    }
         }
+    }
+
+    //MOCKING
+    private void clearMarkers() {
+        if(!lMarkers.isEmpty()){
+            for (Marker m : lMarkers){
+                if (m != null) {
+                    m.remove();
+                }
+            }
+            lMarkers.clear();
+        }
+    }
+
+
+    //MOCKING
+    public void callAsynchronousTask() {
+        final Handler handler = new Handler();
+        Timer timer = new Timer();
+        TimerTask doAsynchronousTask = new TimerTask() {
+            @Override
+            public void run() {
+                handler.post(new Runnable() {
+                    public void run() {
+                        try {
+                            HttpClient client = new DefaultHttpClient();
+                            try {
+                              client.execute(new HttpGet(URL_ONTHEMOVE));
+                            } catch(IOException e) {
+                              //do something here
+                            }
+                            Log.e("UEP! ", "Repetint...");
+                            //borra markers
+                            //clearMarkers();
+
+                            //SetMarkersTask performSetMarkersTask = new SetMarkersTask();
+                            // PerformBackgroundTask this class is the class that extends AsynchTask
+                            //performSetMarkersTask.execute();
+                            //Toast.makeText(getApplicationContext(), "Actualitzant mapa", Toast.LENGTH_LONG).show();
+
+                        } catch (Exception e) {
+                            // TODO Auto-generated catch block
+                        }
+                    }
+                });
+            }
+        };
+        timer.schedule(doAsynchronousTask, 0, 3000); //execute in every 50000 ms
     }
 
     @Override

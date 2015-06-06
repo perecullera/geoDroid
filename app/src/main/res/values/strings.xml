@@ -12,5 +12,6 @@
 
 
 <string name="hello_world">Hello world!</string>
+    <string name="title_activity_sys_admin">SysAdminActivity</string>
 
 </resources>
